@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div class="page">
+<div class="container">
+    <div class="topbar">
+        <a href="/" class="home-link"><span class="home-icon">🌿</span><span>Главная</span></a>
+        <div class="nav">
+            <a href="/" class="nav-btn">Поиск по фото</a>
+            <a href="/selection" class="nav-btn">Подбор по условиям</a>
+            <a href="/history" class="nav-btn">История</a>
+        </div>
+        <div class="auth-links">
+            {% if user %}
+                <a href="/profile" class="user-chip active">{{ user.username }}</a>
+                <a href="/logout" class="logout-btn">Выйти</a>
+            {% else %}
+                <a href="/login" class="nav-btn">Войти</a>
+                <a href="/register" class="nav-btn">Регистрация</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <h1>Профиль пользователя</h1>
+    <p class="description">Здесь собрана краткая персональная статистика по вашим анализам.</p>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ total }}</div>
+            <div class="stat-label">Всего анализов</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ success_percent }}%</div>
+            <div class="stat-label">Успешные определения</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ internet_used }}</div>
+            <div class="stat-label">Через Plant API</div>
+        </div>
+    </div>
+
+    <h2>Ваши самые частые растения</h2>
+    {% if top_plants %}
+        <div class="top-plants">
+            {% for plant in top_plants %}
+                <div class="plant-item">
+                    <strong>{{ plant.name }}</strong>
+                    <span>{{ plant.count }} раз</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">Пока нет данных для отображения.</div>
+    {% endif %}
+</div>
+</div>
+</body>
+</html>

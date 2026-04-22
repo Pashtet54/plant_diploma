@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Поиск растения по фото</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+            <div class="topbar">
+                <a href="/" class="home-link"><span class="home-icon">🌿</span><span>Главная</span></a>
+
+                <div class="nav">
+                    <a href="/" class="nav-btn active">Поиск по фото</a>
+                    <a href="/selection" class="nav-btn">Подбор по условиям</a>
+                    <a href="/history" class="nav-btn">История</a>
+                </div>
+
+                <div class="auth-links">
+                    {% if user %}
+                        <a href="/profile" class="user-chip">{{ user.username }}</a>
+                        <a href="/logout" class="logout-btn">Выйти</a>
+                    {% else %}
+                        <a href="/login" class="nav-btn">Войти</a>
+                        <a href="/register" class="nav-btn">Регистрация</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h1>Поиск растения по фото</h1>
+            <p class="description">
+                Загрузите изображение растения. Система попытается определить его, покажет рекомендации
+                по уходу, похожие растения, а при низкой уверенности — варианты из интернета и локальной модели.
+            </p>
+
+            
+
+            <div class="form-group">
+                <label class="file-label-text" for="fileInput">Выберите изображение растения</label>
+
+                <div class="file-upload-row">
+                    <label for="fileInput" class="custom-file-btn">Выбрать изображение</label>
+                    <span class="file-name" id="fileName">Файл не выбран</span>
+                </div>
+
+                <input type="file" id="fileInput" accept="image/*" class="hidden-file-input" />
+            </div>
+
+            <button id="analyzeBtn">Определить растение</button>
+
+            <div class="preview" id="preview"></div>
+            <div class="loading" id="loading">Идёт анализ изображения...</div>
+            <div class="error" id="error"></div>
+
+            <div class="result" id="result">
+                <h2>Результат анализа</h2>
+                <p><span class="label">Файл:</span> <span id="filename"></span></p>
+                <p><span class="label">Размер изображения:</span> <span id="imageSize"></span></p>
+                <p><span class="label">Растение:</span> <span id="plantName" class="plant-name"></span></p>
+                <p><span class="label">Уверенность:</span> <span id="confidence" class="confidence"></span></p>
+                <p id="message"></p>
+            </div>
+
+            <div class="recommendation-block" id="recommendationBlock">
+                <h2>Рекомендации по уходу</h2>
+                <p><span class="label">Полив:</span> <span id="watering"></span></p>
+                <p><span class="label">Освещение:</span> <span id="light"></span></p>
+                <p><span class="label">Влажность:</span> <span id="humidity"></span></p>
+                <p><span class="label">Температура:</span> <span id="temperature"></span></p>
+                <div>
+                    <span class="label">Советы:</span>
+                    <ul id="tips"></ul>
+                </div>
+            </div>
+
+            <div class="plant-card-block" id="plantCardBlock">
+                <h2>Карточка растения</h2>
+                <img id="plantCardImage" class="plant-card-image" src="" alt="Растение" />
+                <p class="plant-card-text" id="plantCardDescription"></p>
+
+                <div>
+                    <span class="label">Уход:</span>
+                    <ul id="plantCardCare"></ul>
+                </div>
+
+                <div>
+                    <span class="label">Интересные факты:</span>
+                    <ul id="plantCardFacts"></ul>
+                </div>
+            </div>
+
+            <div class="similar-block" id="similarPlantsBlock">
+                <h2>Похожие по параметрам растения</h2>
+                <div id="similarPlantsList"></div>
+            </div>
+
+            <div class="clarification-block" id="clarificationBlock">
+                <h2>Возможные варианты растения</h2>
+                <p class="description">
+                    Локальная модель не смогла уверенно определить растение, ниже показаны наиболее вероятные варианты.
+                </p>
+                <div id="clarificationList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById("fileInput");
+        const analyzeBtn = document.getElementById("analyzeBtn");
+        const preview = document.getElementById("preview");
+        const resultBlock = document.getElementById("result");
+        const recommendationBlock = document.getElementById("recommendationBlock");
+        const similarPlantsBlock = document.getElementById("similarPlantsBlock");
+        const clarificationBlock = document.getElementById("clarificationBlock");
+        const plantCardBlock = document.getElementById("plantCardBlock");
+        const errorBlock = document.getElementById("error");
+        const loadingBlock = document.getElementById("loading");
+
+        fileInput.addEventListener("change", () => {
+            preview.innerHTML = "";
+            errorBlock.textContent = "";
+            resultBlock.style.display = "none";
+            recommendationBlock.style.display = "none";
+            similarPlantsBlock.style.display = "none";
+            clarificationBlock.style.display = "none";
+            plantCardBlock.style.display = "none";
+
+            const file = fileInput.files && fileInput.files[0];
+            const fileNameBlock = document.getElementById("fileName");
+
+            if (!file) {
+                fileNameBlock.textContent = "Файл не выбран";
+                return;
+            }
+
+            fileNameBlock.textContent = file.name;
+
+            if (!file.type.startsWith("image/")) {
+                errorBlock.textContent = "Пожалуйста, выберите файл изображения.";
+                return;
+            }
+
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(file);
+            img.onload = () => URL.revokeObjectURL(img.src);
+            preview.appendChild(img);
+        });
+
+        analyzeBtn.addEventListener("click", async () => {
+            const file = fileInput.files[0];
+
+            if (!file) {
+                errorBlock.textContent = "Пожалуйста, выберите изображение.";
+                return;
+            }
+
+            errorBlock.textContent = "";
+            resultBlock.style.display = "none";
+            recommendationBlock.style.display = "none";
+            similarPlantsBlock.style.display = "none";
+            clarificationBlock.style.display = "none";
+            plantCardBlock.style.display = "none";
+            loadingBlock.style.display = "block";
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await fetch("/analyze", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error("Ошибка при обращении к серверу");
+                }
+
+                const data = await response.json();
+
+                document.getElementById("filename").textContent = data.filename || "-";
+                document.getElementById("imageSize").textContent = data.image_size
+                    ? `${data.image_size[0]} x ${data.image_size[1]}`
+                    : "-";
+
+                const analysis = data.analysis_result || {};
+                const plantNameEl = document.getElementById("plantName");
+                const confidenceEl = document.getElementById("confidence");
+                const messageEl = document.getElementById("message");
+
+                if (analysis.is_unknown) {
+                    plantNameEl.textContent = "Не определено";
+                    plantNameEl.classList.add("unknown");
+                } else {
+                    plantNameEl.textContent = analysis.display_name || analysis.predicted_class || "Не определено";
+                    plantNameEl.classList.remove("unknown");
+                }
+
+                confidenceEl.textContent =
+                    analysis.confidence
+                        ? `${(analysis.confidence * 100).toFixed(1)}%`
+                        : "-";
+
+                messageEl.textContent = analysis.message || "";
+                resultBlock.style.display = "block";
+
+                if (data.recommendations && !analysis.is_unknown) {
+                    document.getElementById("watering").textContent = data.recommendations.watering || "-";
+                    document.getElementById("light").textContent = data.recommendations.light || "-";
+                    document.getElementById("humidity").textContent = data.recommendations.humidity || "-";
+                    document.getElementById("temperature").textContent = data.recommendations.temperature || "-";
+
+                    const tipsList = document.getElementById("tips");
+                    tipsList.innerHTML = "";
+
+                    if (data.recommendations.tips && data.recommendations.tips.length > 0) {
+                        data.recommendations.tips.forEach(tip => {
+                            const li = document.createElement("li");
+                            li.textContent = tip;
+                            tipsList.appendChild(li);
+                        });
+                    } else {
+                        const li = document.createElement("li");
+                        li.textContent = "Советы отсутствуют";
+                        tipsList.appendChild(li);
+                    }
+
+                    recommendationBlock.style.display = "block";
+                }
+
+                if (data.plant_card && !analysis.is_unknown) {
+                    const plantCardImage = document.getElementById("plantCardImage");
+
+                    if (data.plant_card.image) {
+                        plantCardImage.src = data.plant_card.image;
+                        plantCardImage.style.display = "block";
+                        plantCardImage.onerror = function () {
+                            this.style.display = "none";
+                        };
+                    } else {
+                        plantCardImage.style.display = "none";
+                    }
+
+                    document.getElementById("plantCardDescription").textContent = data.plant_card.description || "";
+
+                    const careList = document.getElementById("plantCardCare");
+                    careList.innerHTML = "";
+                    (data.plant_card.care || []).forEach(item => {
+                        const li = document.createElement("li");
+                        li.textContent = item;
+                        careList.appendChild(li);
+                    });
+
+                    const factsList = document.getElementById("plantCardFacts");
+                    factsList.innerHTML = "";
+                    (data.plant_card.facts || []).forEach(item => {
+                        const li = document.createElement("li");
+                        li.textContent = item;
+                        factsList.appendChild(li);
+                    });
+
+                    plantCardBlock.style.display = "block";
+                }
+
+                const similarPlantsList = document.getElementById("similarPlantsList");
+                similarPlantsList.innerHTML = "";
+
+                if (data.similar_plants && data.similar_plants.length > 0 && !analysis.is_unknown) {
+                    data.similar_plants.forEach(plant => {
+                        const card = document.createElement("div");
+                        card.className = "similar-card";
+
+                        card.innerHTML = `
+                            <strong>${plant.name}</strong><br>
+                            <span class="badge">Похожесть: ${plant.score}</span>
+                            <p class="muted">Освещение: ${translateLight(plant.light)}</p>
+                            <p class="muted">Полив: ${translateWatering(plant.watering)}</p>
+                            <p class="muted">Влажность: ${translateHumidity(plant.humidity)}</p>
+                            <p class="muted">Подходит при животных: ${plant.pets_safe ? "Да" : "Нет"}</p>
+                            <p class="muted">Сложность ухода: ${translateDifficulty(plant.difficulty)}</p>
+                        `;
+
+                        similarPlantsList.appendChild(card);
+                    });
+
+                    similarPlantsBlock.style.display = "block";
+                }
+
+                const clarificationList = document.getElementById("clarificationList");
+                clarificationList.innerHTML = "";
+
+                if (analysis.is_unknown) {
+                    if (data.external_results && data.external_results.length > 0) {
+                        const title = document.createElement("h3");
+                        title.textContent = "🔍 Найдено в интернете";
+                        clarificationList.appendChild(title);
+
+                        data.external_results.forEach(item => {
+                            const card = document.createElement("div");
+                            card.className = "clarification-card";
+
+                            card.innerHTML = `
+                                <strong>${item.name || "Неизвестно"}</strong><br>
+                                <span class="badge">Уверенность: ${(item.confidence * 100).toFixed(1)}%</span>
+                                <p class="muted">Научное название: ${item.scientific || "-"}</p>
+                            `;
+
+                            clarificationList.appendChild(card);
+                        });
+                    } else {
+                        const noApi = document.createElement("p");
+                        noApi.className = "muted";
+                        noApi.textContent = "Не удалось получить результаты из интернета.";
+                        clarificationList.appendChild(noApi);
+                    }
+
+                    if (data.local_candidates && data.local_candidates.length > 0) {
+                        const title = document.createElement("h3");
+                        title.textContent = "Варианты локальной модели";
+                        clarificationList.appendChild(title);
+
+                        data.local_candidates.slice(0, 3).forEach(candidate => {
+                            const card = document.createElement("div");
+                            card.className = "clarification-card";
+
+                            card.innerHTML = `
+                                <strong>${candidate.display_name}</strong><br>
+                                <span class="badge">Уверенность модели: ${(candidate.confidence * 100).toFixed(1)}%</span>
+                            `;
+
+                            clarificationList.appendChild(card);
+                        });
+                    }
+
+                    clarificationBlock.style.display = "block";
+                }
+            } catch (error) {
+                errorBlock.textContent = "Не удалось выполнить анализ. Проверьте сервер.";
+            } finally {
+                loadingBlock.style.display = "none";
+            }
+        });
+
+        function translateLight(value) {
+            if (value === "low") return "низкое";
+            if (value === "medium") return "среднее";
+            if (value === "high") return "высокое";
+            return value;
+        }
+
+        function translateWatering(value) {
+            if (value === "rare") return "редкий";
+            if (value === "moderate") return "умеренный";
+            if (value === "frequent") return "частый";
+            return value;
+        }
+
+        function translateHumidity(value) {
+            if (value === "low") return "низкая";
+            if (value === "medium") return "средняя";
+            if (value === "high") return "высокая";
+            return value;
+        }
+
+        function translateDifficulty(value) {
+            if (value === "easy") return "лёгкая";
+            if (value === "medium") return "средняя";
+            if (value === "hard") return "сложная";
+            return value;
+        }
+    </script>
+</body>
+</html>

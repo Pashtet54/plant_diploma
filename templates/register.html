@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+    <div class="page">
+        <div class="container narrow">
+            <div class="topbar">
+                <a href="/" class="home-link"><span class="home-icon">🌿</span><span>Главная</span></a>
+                <div class="nav">
+                    <a href="/" class="nav-btn">Поиск по фото</a>
+                    <a href="/selection" class="nav-btn">Подбор по условиям</a>
+                    <a href="/history" class="nav-btn">История</a>
+                </div>
+                <div class="auth-links">
+                    {% if user %}
+                        <a href="/profile" class="user-chip">{{ user.username }}</a>
+                        <a href="/logout" class="logout-btn">Выйти</a>
+                    {% else %}
+                        <a href="/login" class="nav-btn">Войти</a>
+                        <a href="/register" class="nav-btn active">Регистрация</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h1>Регистрация</h1>
+            <p class="description">Создайте аккаунт для хранения истории и персональных функций.</p>
+
+            {% if errors and errors|length > 0 %}
+                <div class="error-box">
+                    <ul>
+                        {% for error in errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <form method="post" action="/register">
+                <div class="form-group">
+                    <label for="username">Логин</label>
+                    <input type="text" id="username" name="username" required value="{{ form_data.username }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required value="{{ form_data.email }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" required>
+                    <div class="password-rules">
+                        Требования к паролю:
+                        <ul>
+                            <li>минимум 8 символов</li>
+                            <li>хотя бы одна заглавная буква</li>
+                            <li>хотя бы одна строчная буква</li>
+                            <li>хотя бы одна цифра</li>
+                            <li>не более 72 символов</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Повторите пароль</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+
+            <div class="center-links">
+                Уже есть аккаунт? <a href="/login">Войти</a><br><br>
+                <a href="/">На главную</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

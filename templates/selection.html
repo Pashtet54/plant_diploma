@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Подбор растения по условиям</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+            <div class="topbar">
+                <a href="/" class="home-link"><span class="home-icon">🌿</span><span>Главная</span></a>
+                <div class="nav">
+                    <a href="/" class="nav-btn">Поиск по фото</a>
+                    <a href="/selection" class="nav-btn active">Подбор по условиям</a>
+                    <a href="/history" class="nav-btn">История</a>
+                </div>
+                <div class="auth-links">
+                    {% if user %}
+                        <a href="/profile" class="user-chip">{{ user.username }}</a>
+                        <a href="/logout" class="logout-btn">Выйти</a>
+                    {% else %}
+                        <a href="/login" class="nav-btn">Войти</a>
+                        <a href="/register" class="nav-btn">Регистрация</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h1>Подбор растения по условиям</h1>
+            <p class="description">Укажите параметры помещения и предпочтения, чтобы получить список подходящих растений.</p>
+
+            <div class="form-group">
+                <label for="lightSelect">Освещение</label>
+                <select id="lightSelect">
+                    <option value="low">Низкое</option>
+                    <option value="medium">Среднее</option>
+                    <option value="high">Высокое</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="wateringSelect">Частота полива</label>
+                <select id="wateringSelect">
+                    <option value="rare">Редкий</option>
+                    <option value="moderate">Умеренный</option>
+                    <option value="frequent">Частый</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="humiditySelect">Влажность воздуха</label>
+                <select id="humiditySelect">
+                    <option value="low">Низкая</option>
+                    <option value="medium">Средняя</option>
+                    <option value="high">Высокая</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="petsSelect">Есть ли домашние животные</label>
+                <select id="petsSelect">
+                    <option value="false">Нет</option>
+                    <option value="true">Да</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="difficultySelect">Желаемый уровень сложности ухода</label>
+                <select id="difficultySelect">
+                    <option value="easy">Лёгкий</option>
+                    <option value="medium">Средний</option>
+                    <option value="hard">Сложный</option>
+                </select>
+            </div>
+
+            <button id="selectPlantsBtn">Подобрать растения</button>
+
+            <div class="selection-result" id="selectionResult">
+                <h2>Подходящие растения</h2>
+                <div id="selectionList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const selectPlantsBtn = document.getElementById("selectPlantsBtn");
+
+        selectPlantsBtn.addEventListener("click", async () => {
+            const light = document.getElementById("lightSelect").value;
+            const watering = document.getElementById("wateringSelect").value;
+            const humidity = document.getElementById("humiditySelect").value;
+            const pets = document.getElementById("petsSelect").value === "true";
+            const difficulty = document.getElementById("difficultySelect").value;
+
+            const payload = { light, watering, humidity, pets, difficulty };
+
+            try {
+                const response = await fetch("/select-plants", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error("Ошибка при подборе растений");
+
+                const data = await response.json();
+                const selectionResult = document.getElementById("selectionResult");
+                const selectionList = document.getElementById("selectionList");
+                selectionList.innerHTML = "";
+
+                if (data.results && data.results.length > 0) {
+                    data.results.forEach(plant => {
+                        const card = document.createElement("div");
+                        card.className = "selection-card";
+                        card.innerHTML = `
+                            <strong>${plant.name}</strong><br>
+                            <span class="badge">Рейтинг соответствия: ${plant.score}</span>
+                            <p class="muted">Освещение: ${translateLight(plant.light)}</p>
+                            <p class="muted">Полив: ${translateWatering(plant.watering)}</p>
+                            <p class="muted">Влажность: ${translateHumidity(plant.humidity)}</p>
+                            <p class="muted">Подходит при животных: ${plant.pets_safe ? "Да" : "Нет"}</p>
+                            <p class="muted">Сложность ухода: ${translateDifficulty(plant.difficulty)}</p>
+                        `;
+                        selectionList.appendChild(card);
+                    });
+                } else {
+                    selectionList.innerHTML = "<div class='empty-state'>Подходящие растения не найдены.</div>";
+                }
+
+                selectionResult.style.display = "block";
+            } catch (error) {
+                alert("Не удалось подобрать растения");
+            }
+        });
+
+        function translateLight(value) {
+            if (value === "low") return "низкое";
+            if (value === "medium") return "среднее";
+            if (value === "high") return "высокое";
+            return value;
+        }
+        function translateWatering(value) {
+            if (value === "rare") return "редкий";
+            if (value === "moderate") return "умеренный";
+            if (value === "frequent") return "частый";
+            return value;
+        }
+        function translateHumidity(value) {
+            if (value === "low") return "низкая";
+            if (value === "medium") return "средняя";
+            if (value === "high") return "высокая";
+            return value;
+        }
+        function translateDifficulty(value) {
+            if (value === "easy") return "лёгкая";
+            if (value === "medium") return "средняя";
+            if (value === "hard") return "сложная";
+            return value;
+        }
+    </script>
+</body>
+</html>

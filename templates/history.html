@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История анализов</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+            <div class="topbar">
+                <a href="/" class="home-link"><span class="home-icon">🌿</span><span>Главная</span></a>
+                <div class="nav">
+                    <a href="/" class="nav-btn">Поиск по фото</a>
+                    <a href="/selection" class="nav-btn">Подбор по условиям</a>
+                    <a href="/history" class="nav-btn active">История</a>
+                </div>
+                <div class="auth-links">
+                    {% if user %}
+                        <a href="/profile" class="user-chip">{{ user.username }}</a>
+                        <a href="/logout" class="logout-btn">Выйти</a>
+                    {% else %}
+                        <a href="/login" class="nav-btn">Войти</a>
+                        <a href="/register" class="nav-btn">Регистрация</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h1>История анализов</h1>
+            <p class="description">Здесь сохраняются все ваши анализы растений, выполненные после входа в аккаунт.</p>
+
+            {% if history_items and history_items|length > 0 %}
+                {% for item in history_items %}
+                    <div class="history-card">
+                        <strong>{{ item.predicted_name }}</strong><br>
+                        <span class="badge">
+                            Уверенность:
+                            {% if item.confidence is not none %}
+                                {{ "%.1f"|format(item.confidence * 100) }}%
+                            {% else %}
+                                -
+                            {% endif %}
+                        </span>
+
+                        <p class="muted"><strong>Файл:</strong> {{ item.filename }}</p>
+                        <p class="muted"><strong>Дата:</strong> {{ item.formatted_date }}</p>
+                        <p class="muted"><strong>Статус:</strong> {% if item.is_unknown %}Не определено уверенно{% else %}Определено{% endif %}</p>
+
+                        {% if item.image_path %}
+                            <div style="margin-top: 12px;">
+                                <img src="{{ item.image_path }}" alt="Изображение анализа" style="max-width: 220px; border-radius: 14px; border: 1px solid #d1d5db;">
+                            </div>
+                        {% endif %}
+
+                        <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <a href="{{ item.image_path }}" target="_blank" class="action-btn">Открыть фото</a>
+                            <a href="/download-report/{{ item.id }}" class="action-btn">Скачать PDF-отчёт</a>
+                            <form method="post" action="/delete-analysis/{{ item.id }}" style="margin: 0; width: auto;">
+                                <button type="submit" class="delete-btn">Удалить</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">У вас пока нет сохранённых анализов.</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
