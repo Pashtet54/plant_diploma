@@ -41,37 +41,39 @@
             {% endif %}
 
             <form method="post" action="/register">
-                <div class="form-group">
-                    <label for="username">Логин</label>
-                    <input type="text" id="username" name="username" required value="{{ form_data.username }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required value="{{ form_data.email }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Пароль</label>
-                    <input type="password" id="password" name="password" required>
-                    <div class="password-rules">
-                        Требования к паролю:
-                        <ul>
-                            <li>минимум 8 символов</li>
-                            <li>хотя бы одна заглавная буква</li>
-                            <li>хотя бы одна строчная буква</li>
-                            <li>хотя бы одна цифра</li>
-                            <li>не более 72 символов</li>
-                        </ul>
+                <div class="form-container">
+                    <div class="form-group">
+                        <label for="username">Логин</label>
+                        <input type="text" id="username" name="username" required value="{{ form_data.username }}">
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="confirm_password">Повторите пароль</label>
-                    <input type="password" id="confirm_password" name="confirm_password" required>
-                </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required value="{{ form_data.email }}">
+                    </div>
 
-                <button type="submit">Зарегистрироваться</button>
+                    <div class="form-group">
+                        <label for="password">Пароль</label>
+                        <input type="password" id="password" name="password" required>
+                        <div class="password-rules">
+                            Требования к паролю:
+                            <ul>
+                                <li>минимум 8 символов</li>
+                                <li>хотя бы одна заглавная буква</li>
+                                <li>хотя бы одна строчная буква</li>
+                                <li>хотя бы одна цифра</li>
+                                <li>не более 72 символов</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm_password">Повторите пароль</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required>
+                    </div>
+
+                    <button type="submit">Зарегистрироваться</button>
+                    </div>
             </form>
 
             <div class="center-links">

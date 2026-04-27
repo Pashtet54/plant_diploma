@@ -42,9 +42,7 @@ body {
     border: 1px solid rgba(22, 101, 52, 0.06);
 }
 
-.container.narrow {
-    max-width: 620px;
-}
+
 
 .topbar {
     display: grid;
@@ -557,4 +555,20 @@ li {
     .description {
         font-size: 15px;
     }
+}
+.form-container {
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 14px;
+    background: #f9fafb;
+    font-size: 15px;
 }
