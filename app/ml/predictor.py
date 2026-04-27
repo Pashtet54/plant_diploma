@@ -37,7 +37,7 @@ def predict_plant(image):
     top2_conf = float(predictions[top2_idx])
 
     
-    CONFIDENCE_THRESHOLD = 0.75
+    CONFIDENCE_THRESHOLD = 0.65
     GAP_THRESHOLD = 0.20 
 
     #
