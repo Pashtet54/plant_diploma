@@ -1,0 +1,81 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="139" y1="69" x2="863" y2="941" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#27483B"/>
+      <stop offset="0.45" stop-color="#082C24"/>
+      <stop offset="1" stop-color="#031F1A"/>
+    </linearGradient>
+
+    <radialGradient id="light" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(338 189) rotate(52) scale(692 655)">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.17"/>
+      <stop offset="0.45" stop-color="#9AD6A2" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="leaf" x1="357" y1="210" x2="690" y2="821" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ECF8B8"/>
+      <stop offset="0.48" stop-color="#91BF67"/>
+      <stop offset="1" stop-color="#306D2E"/>
+    </linearGradient>
+
+    <linearGradient id="leaf2" x1="230" y1="487" x2="476" y2="711" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#EAF6B9"/>
+      <stop offset="0.55" stop-color="#8EBB62"/>
+      <stop offset="1" stop-color="#397734"/>
+    </linearGradient>
+
+    <linearGradient id="ring" x1="183" y1="139" x2="857" y2="873" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FAF9DD"/>
+      <stop offset="1" stop-color="#CFD8A0"/>
+    </linearGradient>
+
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000000" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- Rounded app-icon background -->
+  <rect x="0" y="0" width="1024" height="1024" rx="180" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1024" height="1024" rx="180" fill="url(#light)"/>
+
+  <!-- Subtle texture dots -->
+  <g opacity="0.045">
+    <circle cx="178" cy="155" r="2" fill="white"/>
+    <circle cx="285" cy="210" r="2" fill="white"/>
+    <circle cx="744" cy="175" r="2" fill="white"/>
+    <circle cx="853" cy="328" r="2" fill="white"/>
+    <circle cx="130" cy="692" r="2" fill="white"/>
+    <circle cx="480" cy="892" r="2" fill="white"/>
+    <circle cx="805" cy="805" r="2" fill="white"/>
+  </g>
+
+  <!-- Broken circular ring -->
+  <path d="M458 820C336 801 241 708 219 586C190 423 295 267 458 226" stroke="url(#ring)" stroke-width="42" stroke-linecap="round" filter="url(#softShadow)"/>
+  <path d="M640 226C779 275 870 408 861 556C854 681 777 788 664 835" stroke="url(#ring)" stroke-width="42" stroke-linecap="round" filter="url(#softShadow)"/>
+
+  <!-- Plant stem -->
+  <path d="M513 836C513 704 518 593 551 491C573 424 611 360 674 298" stroke="#2D6F2C" stroke-width="38" stroke-linecap="round" filter="url(#shadow)"/>
+  <path d="M513 836C503 682 473 562 415 465" stroke="#397B2F" stroke-width="28" stroke-linecap="round" opacity="0.98"/>
+
+  <!-- Center tall leaves -->
+  <path d="M543 627C454 514 456 388 502 298C549 207 639 160 679 158C733 264 724 410 655 514C624 561 589 598 543 627Z" fill="url(#leaf)" filter="url(#shadow)"/>
+  <path d="M550 622C574 491 616 352 681 162" stroke="#0A382E" stroke-width="18" stroke-linecap="round" opacity="0.85"/>
+
+  <!-- Left leaf -->
+  <path d="M426 682C342 668 258 604 235 528C315 481 438 503 489 582C467 625 451 655 426 682Z" fill="url(#leaf2)" filter="url(#shadow)"/>
+  <path d="M263 531C341 553 405 600 456 654" stroke="#0A382E" stroke-width="13" stroke-linecap="round" opacity="0.82"/>
+
+  <!-- Right leaf -->
+  <path d="M593 838C654 744 754 690 836 700C825 789 738 860 638 860C620 860 605 852 593 838Z" fill="url(#leaf)" filter="url(#shadow)"/>
+  <path d="M616 836C678 783 747 744 819 710" stroke="#0A382E" stroke-width="13" stroke-linecap="round" opacity="0.78"/>
+
+  <!-- Lower trunk base -->
+  <path d="M488 842H548V874H488V842Z" fill="#386F30"/>
+
+  <!-- Gloss highlight -->
+  <path d="M91 173C116 76 204 44 322 36H703C823 42 915 86 948 193C790 120 582 93 379 115C260 128 162 151 91 173Z" fill="white" opacity="0.055"/>
+</svg>

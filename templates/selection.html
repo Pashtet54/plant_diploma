@@ -5,12 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Подбор растения по условиям</title>
     <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
 </head>
 <body>
     <div class="page">
         <div class="container">
             <div class="topbar">
-                <a href="/" class="home-link"><span class="home-icon">🌿</span><span>Главная</span></a>
+                <a href="/" class="home-link">
+                    <img src="/static/logo.svg" class="logo">
+                    <span>Главная</span>
+                </a>
                 <div class="nav">
                     <a href="/" class="nav-btn">Поиск по фото</a>
                     <a href="/selection" class="nav-btn active">Подбор по условиям</a>
@@ -29,55 +33,56 @@
 
             <h1>Подбор растения по условиям</h1>
             <p class="description">Укажите параметры помещения и предпочтения, чтобы получить список подходящих растений.</p>
+            <div class="selection-form">
+                <div class="form-group">
+                    <label for="lightSelect">Освещение</label>
+                    <select id="lightSelect">
+                        <option value="low">Низкое</option>
+                        <option value="medium">Среднее</option>
+                        <option value="high">Высокое</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="lightSelect">Освещение</label>
-                <select id="lightSelect">
-                    <option value="low">Низкое</option>
-                    <option value="medium">Среднее</option>
-                    <option value="high">Высокое</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="wateringSelect">Частота полива</label>
+                    <select id="wateringSelect">
+                        <option value="rare">Редкий</option>
+                        <option value="moderate">Умеренный</option>
+                        <option value="frequent">Частый</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="wateringSelect">Частота полива</label>
-                <select id="wateringSelect">
-                    <option value="rare">Редкий</option>
-                    <option value="moderate">Умеренный</option>
-                    <option value="frequent">Частый</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="humiditySelect">Влажность воздуха</label>
+                    <select id="humiditySelect">
+                        <option value="low">Низкая</option>
+                        <option value="medium">Средняя</option>
+                        <option value="high">Высокая</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="humiditySelect">Влажность воздуха</label>
-                <select id="humiditySelect">
-                    <option value="low">Низкая</option>
-                    <option value="medium">Средняя</option>
-                    <option value="high">Высокая</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="petsSelect">Есть ли домашние животные</label>
+                    <select id="petsSelect">
+                        <option value="false">Нет</option>
+                        <option value="true">Да</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="petsSelect">Есть ли домашние животные</label>
-                <select id="petsSelect">
-                    <option value="false">Нет</option>
-                    <option value="true">Да</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="difficultySelect">Желаемый уровень сложности ухода</label>
-                <select id="difficultySelect">
-                    <option value="easy">Лёгкий</option>
-                    <option value="medium">Средний</option>
-                    <option value="hard">Сложный</option>
-                </select>
+                <div class="form-group">
+                    <label for="difficultySelect">Желаемый уровень сложности ухода</label>
+                    <select id="difficultySelect">
+                        <option value="easy">Лёгкий</option>
+                        <option value="medium">Средний</option>
+                        <option value="hard">Сложный</option>
+                    </select>
+                </div>
             </div>
 
             <button id="selectPlantsBtn">Подобрать растения</button>
 
             <div class="selection-result" id="selectionResult">
-                <h2>Подходящие растения</h2>
+                <h2>Наиболее подходящие по параметрамрастения</h2>
                 <div id="selectionList"></div>
             </div>
         </div>
