@@ -79,14 +79,6 @@ PLANT_CARDS = {
         "facts": ["Один из символов весны", "Луковицы ядовиты"]
     },
 
-    "Ктенанта": {
-        "title": "Ктенанта",
-        "image": "/static/plants/ktenanthe.jpg",
-        "description": "Декоративно-лиственное растение с красивым узором на листьях.",
-        "care": ["Полутень", "Высокая влажность", "Мягкая вода для полива"],
-        "facts": ["Похожа на калатею и маранту", "Листья могут менять положение"]
-    },
-
     "Шлюмбергера": {
         "title": "Шлюмбергера",
         "image": "/static/plants/shlyumbergera.jpg",
@@ -284,3 +276,8 @@ PLANT_CARDS = {
 
 def get_plant_card(plant_name: str):
     return PLANT_CARDS.get(plant_name)
+def get_all_plant_cards():
+    return sorted(
+        PLANT_CARDS.values(),
+        key=lambda plant: plant.get("title", "")
+    )

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сравнение растений</title>
+    <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+            <div class="topbar">
+                <a href="/" class="home-link">
+                    <span class="home-icon">🌿</span>
+                    <span>Главная</span>
+                </a>
+
+                <div class="nav">
+                    <a href="/" class="nav-btn">Поиск по фото</a>
+                    <a href="/selection" class="nav-btn">Подбор по условиям</a>
+                    <a href="/encyclopedia" class="nav-btn">Энциклопедия</a>
+                    <a href="/compare" class="nav-btn active">Сравнение</a>
+                    <a href="/compare" class="nav-btn">Сравнение</a>
+                    <a href="/history" class="nav-btn">История</a>
+                </div>
+
+                <div class="auth-links">
+                    {% if user %}
+                        <a href="/profile" class="user-chip">{{ user.username }}</a>
+                        <a href="/logout" class="logout-btn">Выйти</a>
+                    {% else %}
+                        <a href="/login" class="nav-btn">Войти</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h1>Сравнение растений</h1>
+            <p class="description">
+                Выберите два растения и сравните их по условиям ухода: свету, поливу, влажности,
+                сложности выращивания и безопасности для домашних животных.
+            </p>
+
+            {% set light_names = {"low": "Низкое освещение", "medium": "Средний свет", "high": "Яркий свет"} %}
+            {% set watering_names = {"rare": "Редкий полив", "moderate": "Умеренный полив", "frequent": "Частый полив"} %}
+            {% set humidity_names = {"low": "Низкая влажность", "medium": "Средняя влажность", "high": "Высокая влажность"} %}
+            {% set difficulty_names = {"easy": "Лёгкий уход", "medium": "Средняя сложность", "hard": "Сложный уход"} %}
+
+            <form class="compare-form" method="get" action="/compare">
+                <div class="compare-selects">
+                    <div class="compare-field">
+                        <label for="plant1">Первое растение</label>
+                        <select id="plant1" name="plant1" required>
+                            <option value="">Выберите растение</option>
+                            {% for plant in plants %}
+                                <option value="{{ plant.name }}" {% if plant1 == plant.name %}selected{% endif %}>
+                                    {{ plant.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="compare-field">
+                        <label for="plant2">Второе растение</label>
+                        <select id="plant2" name="plant2" required>
+                            <option value="">Выберите растение</option>
+                            {% for plant in plants %}
+                                <option value="{{ plant.name }}" {% if plant2 == plant.name %}selected{% endif %}>
+                                    {{ plant.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="compare-button">Сравнить растения</button>
+            </form>
+
+            {% if plant1 and plant2 and (not first_plant or not second_plant) %}
+                <div class="error-box compare-error">
+                    Одно из выбранных растений не найдено в базе. Проверьте названия.
+                </div>
+            {% endif %}
+
+            {% if first_plant and second_plant %}
+                <div class="compare-result">
+                    {% if first_plant.name == second_plant.name %}
+                        <div class="empty-state">
+                            Вы выбрали одно и то же растение. Для сравнения выберите два разных растения.
+                        </div>
+                    {% else %}
+                        <div class="compare-cards">
+                            <div class="compare-plant-card">
+                                <h2>{{ first_plant.name }}</h2>
+                                <div class="compare-tags">
+                                    <span class="badge">{{ light_names.get(first_plant.light, first_plant.light) }}</span>
+                                    <span class="badge">{{ difficulty_names.get(first_plant.difficulty, first_plant.difficulty) }}</span>
+                                </div>
+                            </div>
+
+                            <div class="compare-vs">VS</div>
+
+                            <div class="compare-plant-card">
+                                <h2>{{ second_plant.name }}</h2>
+                                <div class="compare-tags">
+                                    <span class="badge">{{ light_names.get(second_plant.light, second_plant.light) }}</span>
+                                    <span class="badge">{{ difficulty_names.get(second_plant.difficulty, second_plant.difficulty) }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="compare-table-wrap">
+                            <table class="compare-table">
+                                <thead>
+                                    <tr>
+                                        <th>Параметр</th>
+                                        <th>{{ first_plant.name }}</th>
+                                        <th>{{ second_plant.name }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Освещение</td>
+                                        <td>{{ light_names.get(first_plant.light, first_plant.light) }}</td>
+                                        <td>{{ light_names.get(second_plant.light, second_plant.light) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Полив</td>
+                                        <td>{{ watering_names.get(first_plant.watering, first_plant.watering) }}</td>
+                                        <td>{{ watering_names.get(second_plant.watering, second_plant.watering) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Влажность</td>
+                                        <td>{{ humidity_names.get(first_plant.humidity, first_plant.humidity) }}</td>
+                                        <td>{{ humidity_names.get(second_plant.humidity, second_plant.humidity) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Безопасно для животных</td>
+                                        <td>{% if first_plant.pets_safe %}Да{% else %}Нет{% endif %}</td>
+                                        <td>{% if second_plant.pets_safe %}Да{% else %}Нет{% endif %}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Сложность ухода</td>
+                                        <td>{{ difficulty_names.get(first_plant.difficulty, first_plant.difficulty) }}</td>
+                                        <td>{{ difficulty_names.get(second_plant.difficulty, second_plant.difficulty) }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="compare-summary">
+                            <h2>Краткий вывод</h2>
+                            <ul>
+                                {% if first_plant.difficulty == "easy" and second_plant.difficulty != "easy" %}
+                                    <li><strong>{{ first_plant.name }}</strong> проще в уходе для начинающего пользователя.</li>
+                                {% elif second_plant.difficulty == "easy" and first_plant.difficulty != "easy" %}
+                                    <li><strong>{{ second_plant.name }}</strong> проще в уходе для начинающего пользователя.</li>
+                                {% elif first_plant.difficulty == second_plant.difficulty %}
+                                    <li>Оба растения имеют похожую сложность ухода.</li>
+                                {% else %}
+                                    <li>У растений разный уровень сложности ухода.</li>
+                                {% endif %}
+
+                                {% if first_plant.pets_safe and not second_plant.pets_safe %}
+                                    <li>Если дома есть животные, безопаснее выбрать <strong>{{ first_plant.name }}</strong>.</li>
+                                {% elif second_plant.pets_safe and not first_plant.pets_safe %}
+                                    <li>Если дома есть животные, безопаснее выбрать <strong>{{ second_plant.name }}</strong>.</li>
+                                {% elif first_plant.pets_safe and second_plant.pets_safe %}
+                                    <li>Оба растения отмечены как безопасные для домашних животных.</li>
+                                {% else %}
+                                    <li>Оба растения лучше держать вне доступа домашних животных.</li>
+                                {% endif %}
+
+                                {% if first_plant.light == second_plant.light %}
+                                    <li>Оба растения подходят под похожие условия освещения.</li>
+                                {% else %}
+                                    <li>Растения требуют разных условий освещения.</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -433,3 +433,8 @@ def find_similar_plants(plant_name: str, top_n=3):
 
     similar.sort(key=lambda x: x["score"], reverse=True)
     return similar[:top_n]
+def get_all_plants_for_compare():
+    return sorted(
+        PLANTS_DB,
+        key=lambda plant: plant["name"]
+    )

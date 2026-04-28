@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Избранные растения</title>
+    <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div class="page">
+    <div class="container">
+
+        <div class="topbar">
+            <a href="/" class="home-link">
+                <img src="/static/logo.svg" class="logo" alt="Логотип">
+                <span>Главная</span>
+            </a>
+
+            <div class="nav">
+                <a href="/" class="nav-btn">Поиск по фото</a>
+                <a href="/selection" class="nav-btn">Подбор по условиям</a>
+                <a href="/encyclopedia" class="nav-btn">Энциклопедия</a>
+                <a href="/favorites" class="nav-btn active">Избранное</a>
+                <a href="/compare" class="nav-btn">Сравнение</a>
+                <a href="/history" class="nav-btn">История</a>
+            </div>
+
+            <div class="auth-links">
+                {% if user %}
+                    <a href="/profile" class="user-chip">{{ user.username }}</a>
+                    <a href="/logout" class="logout-btn">Выйти</a>
+                {% else %}
+                    <a href="/login" class="nav-btn">Войти</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <h1>Избранные растения</h1>
+        <p class="description">
+            Здесь находятся растения, которые вы сохранили из энциклопедии.
+        </p>
+
+        {% if plants and plants|length > 0 %}
+            <div class="encyclopedia-grid">
+                {% for plant in plants %}
+                    <div class="encyclopedia-card">
+                        {% if plant.image %}
+                            <img src="{{ plant.image }}" alt="{{ plant.title }}" class="encyclopedia-image">
+                        {% endif %}
+
+                        <div class="encyclopedia-content">
+                            <h2>{{ plant.title }}</h2>
+                            <p>{{ plant.description }}</p>
+
+                            <h3>Уход</h3>
+                            <ul>
+                                {% for item in plant.care %}
+                                    <li>{{ item }}</li>
+                                {% endfor %}
+                            </ul>
+
+                            <h3>Факты</h3>
+                            <ul>
+                                {% for item in plant.facts %}
+                                    <li>{{ item }}</li>
+                                {% endfor %}
+                            </ul>
+
+                            <form method="post" action="/favorites/remove">
+                                <input type="hidden" name="plant_name" value="{{ plant.title }}">
+                                <button type="submit" class="favorite-btn remove">
+                                    Убрать из избранного
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                У вас пока нет избранных растений.
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+</body>
+</html>

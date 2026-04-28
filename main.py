@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, Request, Form
+from fastapi import FastAPI, Request, UploadFile, File, Form, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -12,17 +12,18 @@ import json
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 
-from database import engine, SessionLocal
-from models import Base, User, AnalysisHistory
+from database import engine, Base, SessionLocal, get_db
+from models import User, AnalysisHistory, FavoritePlant
 from auth import hash_password, verify_password, validate_password, validate_username
 
 from app.ml.predictor import predict_plant
 from app.services.plantnet_service import identify_plant_by_image
 from app.services.selector import select_plants
 from app.services.recommendations import get_recommendations
-from app.services.selector import find_similar_plants
-from app.data.plant_cards import get_plant_card
+from app.services.selector import find_similar_plants, get_all_plants_for_compare, get_plant_by_name
+from app.data.plant_cards import get_plant_card, get_all_plant_cards
 from app.services.pdf_report import build_pdf_report
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -57,7 +58,17 @@ def get_current_user(request: Request):
         return user
     finally:
         db.close()
-
+def get_user_favorite_names(user_id: int):
+    db = SessionLocal()
+    try:
+        favorites = (
+            db.query(FavoritePlant)
+            .filter(FavoritePlant.user_id == user_id)
+            .all()
+        )
+        return [favorite.plant_name for favorite in favorites]
+    finally:
+        db.close()
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
@@ -465,3 +476,146 @@ async def select_plants_endpoint(request: Request):
         "success": True,
         "results": results
     }
+@app.get("/encyclopedia")
+def encyclopedia_page(request: Request):
+    user = get_current_user(request)
+
+    plants = get_all_plant_cards()
+
+    favorite_names = []
+    if user:
+        favorite_names = get_user_favorite_names(user.id)
+
+    return templates.TemplateResponse(
+        "encyclopedia.html",
+        {
+            "request": request,
+            "user": user,
+            "plants": plants,
+            "favorite_names": favorite_names
+        }
+    )
+@app.post("/favorites/add")
+def add_favorite_plant(request: Request, plant_name: str = Form(...)):
+    user = get_current_user(request)
+
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+
+    db = SessionLocal()
+
+    try:
+        existing = (
+            db.query(FavoritePlant)
+            .filter(
+                FavoritePlant.user_id == user.id,
+                FavoritePlant.plant_name == plant_name
+            )
+            .first()
+        )
+
+        if not existing:
+            favorite = FavoritePlant(
+                user_id=user.id,
+                plant_name=plant_name
+            )
+            db.add(favorite)
+            db.commit()
+
+    finally:
+        db.close()
+
+    return RedirectResponse(
+        url=request.headers.get("referer", "/encyclopedia"),
+        status_code=303
+    )
+
+
+@app.post("/favorites/remove")
+def remove_favorite_plant(request: Request, plant_name: str = Form(...)):
+    user = get_current_user(request)
+
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+
+    db = SessionLocal()
+
+    try:
+        favorite = (
+            db.query(FavoritePlant)
+            .filter(
+                FavoritePlant.user_id == user.id,
+                FavoritePlant.plant_name == plant_name
+            )
+            .first()
+        )
+
+        if favorite:
+            db.delete(favorite)
+            db.commit()
+
+    finally:
+        db.close()
+
+    return RedirectResponse(
+        url=request.headers.get("referer", "/favorites"),
+        status_code=303
+    )
+
+
+@app.get("/favorites")
+def favorites_page(request: Request):
+    user = get_current_user(request)
+
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+
+    db = SessionLocal()
+
+    try:
+        favorites = (
+            db.query(FavoritePlant)
+            .filter(FavoritePlant.user_id == user.id)
+            .order_by(FavoritePlant.created_at.desc())
+            .all()
+        )
+
+        favorite_cards = []
+
+        for favorite in favorites:
+            card = get_plant_card(favorite.plant_name)
+
+            if card:
+                favorite_cards.append(card)
+
+        return templates.TemplateResponse(
+            "favorites.html",
+            {
+                "request": request,
+                "user": user,
+                "plants": favorite_cards
+            }
+        )
+
+    finally:
+        db.close()
+@app.get("/compare")
+def compare_page(request: Request, plant1: str = "", plant2: str = ""):
+    user = get_current_user(request)
+
+    plants = get_all_plants_for_compare()
+    first_plant = get_plant_by_name(plant1) if plant1 else None
+    second_plant = get_plant_by_name(plant2) if plant2 else None
+
+    return templates.TemplateResponse(
+        "compare.html",
+        {
+            "request": request,
+            "user": user,
+            "plants": plants,
+            "plant1": plant1,
+            "plant2": plant2,
+            "first_plant": first_plant,
+            "second_plant": second_plant,
+        }
+    )
