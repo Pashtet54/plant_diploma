@@ -106,6 +106,19 @@
                                     {% endfor %}
                                 </ul>
                             </div>
+
+                            {% if user %}
+                                <form method="post" action="/favorites/add">
+                                    <input type="hidden" name="plant_name" value="{{ plant.title }}">
+                                    <button type="submit" class="favorite-btn">
+                                        Добавить в избранное
+                                    </button>
+                                </form>
+                            {% else %}
+                                <a href="/login" class="favorite-link">
+                                    Войдите, чтобы добавить в избранное
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}

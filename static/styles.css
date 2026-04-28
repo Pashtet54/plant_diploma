@@ -6,39 +6,21 @@
     --bg-1: #eef6f2;
     --bg-2: #dff0e8;
     --bg-3: #cfe7dd;
-
     --surface: rgba(255, 255, 255, 0.72);
     --surface-strong: rgba(255, 255, 255, 0.86);
-    --surface-soft: rgba(244, 250, 247, 0.7);
-
     --border: rgba(255, 255, 255, 0.45);
-    --border-strong: rgba(120, 166, 143, 0.22);
-
     --text: #20322c;
     --muted: #5f736b;
-
     --green-dark: #0f5c45;
     --green: #198754;
     --green-2: #1fae67;
-    --green-light: #e6f8ee;
-    --green-pale: #eefaf3;
-
     --teal: #2fa7a0;
-    --mint: #72d3b0;
-    --blue-soft: #d8eef4;
-
     --danger-bg: rgba(255, 235, 235, 0.85);
     --danger-text: #a73a3a;
-
-    --shadow: 0 16px 40px rgba(34, 60, 48, 0.10);
     --shadow-soft: 0 10px 24px rgba(34, 60, 48, 0.08);
     --shadow-strong: 0 20px 52px rgba(24, 51, 41, 0.16);
-
     --blur: blur(16px);
     --radius-xl: 28px;
-    --radius-lg: 20px;
-    --radius-md: 16px;
-    --radius-sm: 12px;
 }
 
 html {
@@ -59,7 +41,6 @@ body {
     position: relative;
 }
 
-/* Плавающие фоновые "сферы" */
 body::before,
 body::after {
     content: "";
@@ -89,9 +70,29 @@ body::after {
 }
 
 @keyframes floatOrb {
-    0% { transform: translateY(0px) translateX(0px) scale(1); }
-    50% { transform: translateY(-18px) translateX(8px) scale(1.04); }
-    100% { transform: translateY(0px) translateX(0px) scale(1); }
+    0% {
+        transform: translateY(0) translateX(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-18px) translateX(8px) scale(1.04);
+    }
+
+    100% {
+        transform: translateY(0) translateX(0) scale(1);
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .page {
@@ -115,7 +116,6 @@ body::after {
     overflow: hidden;
 }
 
-/* Декоративная волна сверху */
 .container::before {
     content: "";
     position: absolute;
@@ -134,26 +134,26 @@ body::after {
     z-index: 1;
 }
 
-/* =========================
-   ВЕРХНЯЯ ПАНЕЛЬ
-========================= */
 .topbar {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
+    display: flex;
     align-items: center;
-    gap: 18px;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
     margin-bottom: 30px;
 }
 
 .home-link {
+    flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
-    padding: 12px 18px;
+    padding: 9px 12px;
     text-decoration: none;
     color: var(--green-dark);
     font-weight: 800;
-    font-size: 18px;
+    font-size: 14px;
     border-radius: 18px;
     background: rgba(255,255,255,0.68);
     border: 1px solid rgba(117, 199, 156, 0.42);
@@ -166,6 +166,16 @@ body::after {
     transform: translateY(-2px);
     box-shadow: 0 14px 28px rgba(30, 60, 50, 0.12);
     background: rgba(255,255,255,0.82);
+}
+
+.logo {
+    width: 32px;
+    height: 32px;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: rotate(10deg) scale(1.1);
 }
 
 .home-icon {
@@ -181,34 +191,45 @@ body::after {
 }
 
 .nav {
+    flex: 1 1 auto;
     display: flex;
     justify-content: center;
-    gap: 12px;
+    align-items: center;
+    gap: 10px;
     flex-wrap: wrap;
+    overflow: visible;
+    scrollbar-width: none;
+}
+
+.nav::-webkit-scrollbar {
+    display: none;
 }
 
 .auth-links {
+    flex: 0 0 auto;
+    margin-left: auto;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 12px;
-    flex-wrap: wrap;
+    gap: 10px;
+    flex-wrap: nowrap;
 }
 
 .nav-btn,
 .auth-links a,
 .user-chip {
     position: relative;
+    flex: 0 1 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 11px 18px;
+    padding: 9px 12px;
     min-height: 46px;
     border-radius: 16px;
     border: 1px solid transparent;
     text-decoration: none;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 14px;
     color: var(--green-dark);
     background: rgba(240, 248, 243, 0.82);
     box-shadow: 0 4px 16px rgba(40, 70, 55, 0.06);
@@ -220,15 +241,24 @@ body::after {
 .auth-links a:hover,
 .user-chip:hover {
     transform: translateY(-2px);
-    background: rgba(248, 252, 249, 0.95);
-    box-shadow: 0 10px 24px rgba(40, 70, 55, 0.10);
+    background: rgba(226, 248, 235, 0.95);
+    color: var(--green-dark);
+    box-shadow: 0 10px 24px rgba(40, 70, 55, 0.12);
 }
 
 .nav-btn.active,
 .user-chip.active {
-    color: white !important;
+    color: white;
     background: linear-gradient(135deg, #19a85d 0%, #138e72 100%);
     box-shadow: 0 12px 24px rgba(25, 168, 93, 0.28);
+}
+
+.nav-btn.active:hover,
+.auth-links a.active:hover,
+.user-chip.active:hover {
+    color: #ffffff;
+    background: linear-gradient(135deg, #1fb25d 0%, #14906a 100%);
+    box-shadow: 0 14px 28px rgba(31, 178, 93, 0.32);
 }
 
 .user-chip {
@@ -243,13 +273,13 @@ body::after {
 }
 
 .logout-btn:hover {
-    background: rgba(255, 243, 243, 0.95) !important;
+    background: rgba(255, 220, 220, 0.95) !important;
+    color: #991b1b !important;
 }
 
-/* =========================
-   ТЕКСТЫ И ЗАГОЛОВКИ
-========================= */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     margin-top: 0;
     text-align: center;
     color: var(--green-dark);
@@ -285,11 +315,16 @@ h3 {
     line-height: 1.8;
 }
 
-
-.form-wrapper {
+.form-wrapper,
+.form-container,
+.selection-form {
     max-width: 640px;
     margin: 0 auto;
     padding: 10px 0;
+}
+
+.selection-form {
+    max-width: 500px;
 }
 
 .form-group {
@@ -302,6 +337,16 @@ label {
     font-weight: 700;
     color: #30423b;
     font-size: 16px;
+}
+
+.form-container label,
+.selection-form label {
+    display: block;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 6px;
+    font-size: 15px;
+    opacity: 0.8;
 }
 
 input[type="text"],
@@ -324,6 +369,19 @@ textarea {
     transition: all 0.25s ease;
 }
 
+.form-container input,
+.form-container .password-rules {
+    max-width: 430px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.selection-form select {
+    width: 100%;
+    text-align: left;
+}
+
 input:focus,
 select:focus,
 textarea:focus {
@@ -335,7 +393,6 @@ textarea:focus {
     background: rgba(255,255,255,0.92);
 }
 
-/* Кнопки */
 button,
 .button {
     width: 100%;
@@ -366,9 +423,6 @@ button:active,
     transform: translateY(0);
 }
 
-/* =========================
-   ЗАГРУЗКА ФАЙЛА
-========================= */
 .file-label-text {
     display: block;
     margin-bottom: 12px;
@@ -424,9 +478,6 @@ button:active,
     word-break: break-word;
 }
 
-/* =========================
-   ПРЕВЬЮ
-========================= */
 .preview {
     margin-top: 24px;
     text-align: center;
@@ -440,9 +491,6 @@ button:active,
     box-shadow: 0 14px 32px rgba(19, 52, 39, 0.12);
 }
 
-/* =========================
-   КАРТОЧКИ/БЛОКИ
-========================= */
 .result,
 .recommendation-block,
 .similar-block,
@@ -450,7 +498,8 @@ button:active,
 .plant-card-block,
 .selection-result,
 .profile-card,
-.history-card {
+.history-card,
+.model-info-card {
     margin-top: 28px;
     padding: 24px;
     border-radius: 22px;
@@ -475,17 +524,6 @@ button:active,
 .selection-result,
 .history-card {
     display: block;
-}
-
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(14px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .label {
@@ -612,7 +650,6 @@ li {
     line-height: 1.75;
 }
 
-
 .password-rules {
     margin-top: 10px;
     font-size: 14px;
@@ -645,19 +682,20 @@ li {
     text-decoration: underline;
 }
 
-/* =========================
-   КНОПКИ ДЕЙСТВИЯ
-========================= */
-.action-btn {
+.action-btn,
+.delete-btn {
     padding: 10px 14px;
     border-radius: 14px;
-    background: rgba(220, 242, 251, 0.8);
-    color: #23617b;
     text-decoration: none;
     font-weight: 700;
     display: inline-block;
-    border: 1px solid rgba(112, 171, 191, 0.18);
     transition: 0.2s ease;
+}
+
+.action-btn {
+    background: rgba(220, 242, 251, 0.8);
+    color: #23617b;
+    border: 1px solid rgba(112, 171, 191, 0.18);
 }
 
 .action-btn:hover {
@@ -665,48 +703,78 @@ li {
 }
 
 .delete-btn {
-    padding: 10px 14px;
-    border-radius: 14px;
     background: rgba(255, 236, 236, 0.85);
     color: #b23d3d;
     border: 1px solid rgba(226, 159, 159, 0.22);
     cursor: pointer;
-    font-weight: 700;
-    transition: 0.2s ease;
 }
 
 .delete-btn:hover {
     background: rgba(255, 245, 245, 0.98);
 }
 
-
-.stats-grid {
+.stats-grid,
+.model-stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
     margin: 24px 0 28px;
 }
 
-.stat-card {
+.stats-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.model-stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.stat-card,
+.model-stat-card {
     padding: 22px 18px;
     text-align: center;
     border-radius: 20px;
     background: linear-gradient(180deg, rgba(247, 252, 249, 0.94), rgba(236, 248, 241, 0.92));
     border: 1px solid rgba(122, 194, 158, 0.22);
     box-shadow: 0 12px 24px rgba(25, 58, 44, 0.06);
+    transition: 0.25s ease;
 }
 
-.stat-value {
+.model-stat-card {
+    padding: 24px 18px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 14px 34px rgba(21, 52, 40, 0.08);
+}
+
+.model-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 42px rgba(21, 52, 40, 0.13);
+}
+
+.stat-value,
+.model-stat-value {
     font-size: 34px;
     font-weight: 800;
     color: var(--green-dark);
 }
 
-.stat-label {
+.model-stat-value {
+    font-size: 30px;
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+
+.stat-label,
+.model-stat-label {
     margin-top: 8px;
     color: #42554d;
     font-weight: 600;
     line-height: 1.4;
+}
+
+.model-stat-label {
+    color: var(--muted);
+    font-weight: 700;
 }
 
 .top-plants {
@@ -740,184 +808,87 @@ li {
     margin-top: 20px;
 }
 
-
 hr {
     border: none;
     border-top: 1px solid rgba(127, 153, 141, 0.16);
     margin: 20px 0;
 }
 
-
-@media (max-width: 980px) {
-    .topbar {
-        grid-template-columns: 1fr;
-        justify-items: center;
-    }
-
-    .nav,
-    .auth-links {
-        justify-content: center;
-    }
-
-    h1 {
-        font-size: 38px;
-    }
+.encyclopedia-filter-panel {
+    max-width: 720px;
+    margin: 0 auto 30px auto;
+    padding: 22px;
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.68);
+    border: 1px solid rgba(141, 168, 156, 0.20);
+    box-shadow: 0 14px 34px rgba(21, 52, 40, 0.08);
+    backdrop-filter: blur(10px);
 }
 
-@media (max-width: 760px) {
-    .page {
-        padding: 18px 12px;
-    }
-
-    .container {
-        padding: 20px 16px 24px;
-        border-radius: 22px;
-    }
-
-    h1 {
-        font-size: 30px;
-    }
-
-    h2 {
-        font-size: 24px;
-    }
-
-    .description {
-        font-size: 16px;
-        line-height: 1.7;
-    }
-
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .file-upload-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .custom-file-btn {
-        width: 100%;
-        min-width: 100%;
-    }
-
-    .nav {
-        gap: 10px;
-    }
-
-    .nav-btn,
-    .auth-links a,
-    .user-chip {
-        font-size: 15px;
-        padding: 10px 14px;
-    }
-}
-/* ===== ИСПРАВЛЕНИЕ HOVER ДЛЯ ВЕРХНИХ КНОПОК ===== */
-
-/* Обычные кнопки при наведении — не белые, а светло-зелёные */
-.nav-btn:hover,
-.auth-links a:hover,
-.user-chip:hover {
-    background: rgba(226, 248, 235, 0.95) !important;
-    color: #0f5c45 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(40, 70, 55, 0.12);
+.encyclopedia-search-row {
+    margin-bottom: 16px;
 }
 
-
-.nav-btn.active:hover,
-.auth-links a.active:hover,
-.user-chip.active:hover {
-    background: linear-gradient(135deg, #1fb25d 0%, #14906a 100%) !important;
-    color: #ffffff !important;
-    transform: translateY(-2px);
-    box-shadow: 0 14px 28px rgba(31, 178, 93, 0.32);
-}
-
-
-.logout-btn:hover {
-    background: rgba(255, 220, 220, 0.95) !important;
-    color: #991b1b !important;
-}
-
-.form-container label {
-    display: block;
+.encyclopedia-search,
+.encyclopedia-search-input {
+    width: 100%;
+    max-width: 600px;
     text-align: center;
-    width: 100%;
-    margin-bottom: 6px;
-    font-size: 15px;
-    opacity: 0.8;
-}
-.selection-form {
-    max-width: 500px;
-    margin: 0 auto;
+    font-weight: 600;
 }
 
-/* Центрируем всё внутри */
-.selection-form label {
-    text-align: center;
-}
-
-.selection-form select {
-    width: 100%;
-    text-align: left;
-}
-.form-container input,
-.form-container .password-rules {
-    max-width: 430px;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-
-.home-link {
+.encyclopedia-filter-bottom {
+    margin-top: 18px;
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 10px;
-    font-weight: 800;
-    font-size: 18px;
-}
-.logo {
-    width: 32px;
-    height: 32px;
-    transition: transform 0.3s ease;
+    gap: 16px;
+    flex-wrap: wrap;
+    text-align: center;
 }
 
-.logo:hover {
-    transform: rotate(10deg) scale(1.1);
+.plants-count {
+    font-weight: 800;
+    color: var(--green-dark);
 }
-/* ===== Энциклопедия растений ===== */
+
+.reset-filters-btn {
+    width: auto;
+    min-width: 170px;
+    padding: 12px 18px;
+    border-radius: 16px;
+    font-size: 15px;
+}
+
 .encyclopedia-tools {
     max-width: 520px;
     margin: 0 auto 28px auto;
 }
 
-.encyclopedia-search {
-    width: 100%;
-    text-align: center;
-}
-
 .encyclopedia-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 22px;
-    margin-top: 24px;
+    margin-top: 28px;
+    align-items: stretch;
 }
 
 .encyclopedia-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     overflow: hidden;
     border-radius: 24px;
-    background: rgba(255, 255, 255, 0.82);
-    border: 1px solid rgba(141, 168, 156, 0.18);
-    box-shadow: 0 14px 34px rgba(21, 52, 40, 0.08);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(141, 168, 156, 0.22);
+    box-shadow: 0 14px 34px rgba(20, 60, 40, 0.10);
+    transition: 0.25s ease;
     animation: fadeUp 0.45s ease;
 }
 
 .encyclopedia-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 22px 46px rgba(21, 52, 40, 0.13);
+    transform: translateY(-4px);
+    box-shadow: 0 18px 42px rgba(20, 60, 40, 0.15);
 }
 
 .encyclopedia-image-wrap {
@@ -931,7 +902,7 @@ hr {
 
 .encyclopedia-image {
     width: 100%;
-    height: 100%;
+    height: 220px;
     object-fit: cover;
     display: block;
     transition: transform 0.35s ease;
@@ -945,11 +916,16 @@ hr {
     font-size: 64px;
 }
 
-.encyclopedia-card-body {
+.encyclopedia-card-body,
+.encyclopedia-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     padding: 20px;
 }
 
-.encyclopedia-card h2 {
+.encyclopedia-card h2,
+.encyclopedia-content h2 {
     margin-bottom: 10px;
     font-size: 24px;
     text-align: left;
@@ -967,10 +943,15 @@ hr {
     border-top: 1px solid rgba(141, 168, 156, 0.16);
 }
 
-.encyclopedia-section h3 {
+.encyclopedia-section:last-of-type {
+    margin-bottom: 18px;
+}
+
+.encyclopedia-section h3,
+.encyclopedia-content h3 {
     text-align: left;
     font-size: 17px;
-    margin-bottom: 8px;
+    margin: 16px 0 8px;
 }
 
 .encyclopedia-section ul {
@@ -983,69 +964,47 @@ hr {
     line-height: 1.5;
 }
 
-@media (max-width: 700px) {
-    .encyclopedia-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .encyclopedia-card h2,
-    .encyclopedia-section h3 {
-        text-align: center;
-    }
-}
-/* ===== Избранное и энциклопедия ===== */
-
-.encyclopedia-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 22px;
-    margin-top: 28px;
+.plant-params-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 14px 0 16px 0;
 }
 
-.encyclopedia-card {
-    background: rgba(255, 255, 255, 0.78);
-    border: 1px solid rgba(141, 168, 156, 0.22);
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 14px 34px rgba(20, 60, 40, 0.10);
-    transition: 0.25s ease;
+.plant-param-badge,
+.model-class-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(236, 253, 245, 0.9);
+    color: var(--green-dark);
+    font-size: 13px;
+    font-weight: 800;
+    border: 1px solid rgba(117, 199, 156, 0.22);
 }
 
-.encyclopedia-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 18px 42px rgba(20, 60, 40, 0.15);
-}
-
-.encyclopedia-image {
+.favorite-btn,
+.favorite-link {
     width: 100%;
-    height: 220px;
-    object-fit: cover;
-    display: block;
-}
-
-.encyclopedia-content {
-    padding: 20px;
-}
-
-.encyclopedia-content h2 {
-    margin-bottom: 10px;
-}
-
-.encyclopedia-content h3 {
-    font-size: 18px;
-    margin-top: 16px;
-    margin-bottom: 8px;
+    min-height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 16px;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
 }
 
 .favorite-btn {
-    width: 100%;
     margin-top: 16px;
-    padding: 13px 16px;
-    border-radius: 16px;
     border: none;
     background: linear-gradient(135deg, #16a34a, #0f766e);
     color: white;
-    font-weight: 800;
     cursor: pointer;
     transition: 0.25s ease;
 }
@@ -1056,9 +1015,9 @@ hr {
 }
 
 .favorite-btn.remove {
-    background: var(--danger-bg) !important;
-    color: var(--danger-text) !important;
-    border: 1px solid rgba(224, 153, 153, 0.28);
+    background: rgba(255, 236, 236, 0.9) !important;
+    color: #b23d3d !important;
+    border: 1px solid rgba(226, 159, 159, 0.28);
     box-shadow: none;
 }
 
@@ -1070,28 +1029,23 @@ hr {
 }
 
 .favorite-link {
-    display: block;
-    margin-top: 16px;
-    padding: 13px 16px;
-    border-radius: 16px;
-    text-align: center;
-    background: rgba(236, 253, 245, 0.85);
+    margin-top: auto;
+    background: rgba(236, 253, 245, 0.9);
     color: #166534;
-    font-weight: 800;
-    text-decoration: none;
+    border: 1px solid rgba(117, 199, 156, 0.22);
 }
 
 .favorite-link:hover {
     background: rgba(220, 252, 231, 0.95);
 }
-.nav-btn,
-.auth-links a,
-.user-chip,
-.home-link {
-    padding: 9px 12px !important;
-    font-size: 14px !important;
+
+.encyclopedia-card-body form,
+.encyclopedia-content form {
+    margin-top: auto;
+    width: 100%;
+    padding-top: 22px;
 }
-/* ===== Страница сравнения растений ===== */
+
 .compare-form {
     max-width: 760px;
     margin: 0 auto 28px auto;
@@ -1195,14 +1149,14 @@ hr {
 }
 
 .compare-table th {
-    color: var(--green-dark, #0f5c45);
+    color: var(--green-dark);
     background: rgba(232, 247, 238, 0.9);
     font-weight: 900;
 }
 
 .compare-table td:first-child {
     font-weight: 900;
-    color: var(--green-dark, #0f5c45);
+    color: var(--green-dark);
 }
 
 .compare-summary {
@@ -1226,261 +1180,68 @@ hr {
     text-align: center;
 }
 
-/* Чтобы меню не разваливалось от новой кнопки */
-.nav {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: thin;
-}
-
-.nav-btn {
-    flex: 0 0 auto;
-}
-
-@media (max-width: 760px) {
-    .compare-selects {
-        grid-template-columns: 1fr;
-    }
-
-    .compare-cards {
-        grid-template-columns: 1fr;
-    }
-
-    .compare-vs {
-        margin: 0 auto;
-    }
-}
-/* ===== Шкала уверенности модели ===== */
-
-/* ===== Красивая шкала уверенности ===== */
-
 .confidence-bar-box {
-    width: 100% !important;
-    max-width: 620px !important;
-    margin: 18px auto 18px auto !important;
-    padding: 18px !important;
-    border-radius: 20px !important;
-    background: rgba(255, 255, 255, 0.85) !important;
-    border: 1px solid rgba(20, 120, 80, 0.16) !important;
-    box-shadow: 0 12px 30px rgba(15, 80, 55, 0.10) !important;
+    width: 100%;
+    max-width: 620px;
+    margin: 18px auto;
+    padding: 18px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(20, 120, 80, 0.16);
+    box-shadow: 0 12px 30px rgba(15, 80, 55, 0.10);
 }
 
 .confidence-bar-header {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    margin-bottom: 10px !important;
-    color: #0f5c45 !important;
-    font-weight: 800 !important;
-}
-
-.confidence-bar-header strong {
-    font-size: 20px !important;
-    color: #0f5c45 !important;
-}
-
-.confidence-bar-track {
-    width: 100% !important;
-    height: 20px !important;
-    background: #e5eee9 !important;
-    border-radius: 999px !important;
-    overflow: hidden !important;
-    position: relative !important;
-}
-
-.confidence-bar-fill {
-    height: 100% !important;
-    width: 0%;
-    border-radius: 999px !important;
-    transition: width 0.8s ease !important;
-}
-
-.confidence-bar-high {
-    background: linear-gradient(90deg, #16a34a, #22c55e) !important;
-}
-
-.confidence-bar-medium {
-    background: linear-gradient(90deg, #f59e0b, #facc15) !important;
-}
-
-.confidence-bar-low {
-    background: linear-gradient(90deg, #dc2626, #f87171) !important;
-}
-
-.confidence-bar-text {
-    margin-top: 10px !important;
-    text-align: center !important;
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    color: #30423b !important;
-}
-/* ===== Фильтры энциклопедии ===== */
-
-.encyclopedia-filter-panel {
-    max-width: 980px;
-    margin: 0 auto 30px auto;
-    padding: 22px;
-    border-radius: 26px;
-    background: rgba(255, 255, 255, 0.68);
-    border: 1px solid rgba(141, 168, 156, 0.20);
-    box-shadow: 0 14px 34px rgba(21, 52, 40, 0.08);
-    backdrop-filter: blur(10px);
-}
-
-.encyclopedia-search-row {
-    margin-bottom: 18px;
-}
-
-.encyclopedia-search-input {
-    max-width: 720px !important;
-    text-align: center;
-    font-weight: 600;
-}
-
-.encyclopedia-filters {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-}
-
-.filter-field label {
-    display: block;
-    text-align: center;
-    font-weight: 800;
-    margin-bottom: 8px;
-    color: var(--green-dark);
-}
-
-.filter-field select {
-    width: 100%;
-    max-width: 100%;
-    text-align: center;
-}
-
-.encyclopedia-filter-bottom {
-    margin-top: 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
+    margin-bottom: 10px;
+    color: var(--green-dark);
+    font-weight: 800;
 }
 
-.plants-count {
-    font-weight: 800;
+.confidence-bar-header strong {
+    font-size: 20px;
     color: var(--green-dark);
 }
 
-.reset-filters-btn {
-    width: auto;
-    min-width: 180px;
-    padding: 12px 18px;
-    border-radius: 16px;
-    font-size: 15px;
-}
-
-.plant-params-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 14px 0 16px 0;
-}
-
-.plant-param-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 7px 10px;
+.confidence-bar-track {
+    width: 100%;
+    height: 20px;
+    background: #e5eee9;
     border-radius: 999px;
-    background: rgba(236, 253, 245, 0.9);
-    color: #0f5c45;
-    font-size: 13px;
-    font-weight: 800;
-    border: 1px solid rgba(117, 199, 156, 0.22);
+    overflow: hidden;
+    position: relative;
 }
 
-@media (max-width: 900px) {
-    .encyclopedia-filters {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .encyclopedia-filter-bottom {
-        justify-content: center;
-        text-align: center;
-    }
+.confidence-bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    transition: width 0.8s ease;
 }
 
-@media (max-width: 560px) {
-    .encyclopedia-filters {
-        grid-template-columns: 1fr;
-    }
-
-    .reset-filters-btn {
-        width: 100%;
-    }
-}
-/* ===== Упрощённый поиск энциклопедии ===== */
-
-.encyclopedia-filter-panel {
-    max-width: 720px;
+.confidence-bar-high {
+    background: linear-gradient(90deg, #16a34a, #22c55e);
 }
 
-.encyclopedia-search-row {
-    margin-bottom: 16px;
+.confidence-bar-medium {
+    background: linear-gradient(90deg, #f59e0b, #facc15);
 }
 
-.encyclopedia-search-input {
-    max-width: 600px !important;
+.confidence-bar-low {
+    background: linear-gradient(90deg, #dc2626, #f87171);
+}
+
+.confidence-bar-text {
+    margin-top: 10px;
     text-align: center;
-}
-
-.encyclopedia-filter-bottom {
-    justify-content: center;
-    text-align: center;
-}
-
-.reset-filters-btn {
-    width: auto;
-    min-width: 170px;
-}
-/* ===== Страница "О модели" ===== */
-
-.model-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
-    margin: 28px 0;
-}
-
-.model-stat-card {
-    padding: 24px 18px;
-    border-radius: 24px;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.78);
-    border: 1px solid rgba(141, 168, 156, 0.22);
-    box-shadow: 0 14px 34px rgba(21, 52, 40, 0.08);
-    transition: 0.25s ease;
-}
-
-.model-stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 42px rgba(21, 52, 40, 0.13);
-}
-
-.model-stat-value {
-    font-size: 30px;
-    font-weight: 900;
-    color: var(--green-dark);
-    margin-bottom: 8px;
-}
-
-.model-stat-label {
-    color: var(--muted);
+    font-size: 15px;
     font-weight: 700;
-    line-height: 1.4;
+    color: #30423b;
 }
 
 .model-info-card {
-    margin-top: 28px;
     padding: 26px;
     border-radius: 26px;
     background: rgba(255, 255, 255, 0.78);
@@ -1519,11 +1280,7 @@ hr {
 
 .model-class-badge {
     padding: 9px 13px;
-    border-radius: 999px;
-    background: rgba(236, 253, 245, 0.9);
-    color: var(--green-dark);
-    font-weight: 800;
-    border: 1px solid rgba(117, 199, 156, 0.22);
+    font-size: 14px;
 }
 
 .model-description {
@@ -1535,119 +1292,368 @@ hr {
     font-size: 17px;
 }
 
-@media (max-width: 950px) {
-    .model-stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 600px) {
-    .model-stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .model-info-row {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .model-info-row strong {
-        text-align: center;
-    }
-}
-/* ===== ФИКС ВЕРХНЕГО МЕНЮ БЕЗ ПОЛЗУНКА ===== */
-
-.topbar {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 14px !important;
-    flex-wrap: wrap !important;
-}
-
-.nav {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 10px !important;
-    flex-wrap: wrap !important;
-
-    overflow-x: visible !important;
-    overflow-y: visible !important;
-    scrollbar-width: none !important;
-}
-
-.nav::-webkit-scrollbar {
-    display: none !important;
-}
-
-.nav-btn {
-    flex: 0 1 auto !important;
-}
-
-.auth-links {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    gap: 10px !important;
-    flex-wrap: wrap !important;
-}
-
-/* Чтобы кнопки не были слишком большими */
-.nav-btn,
-.auth-links a,
-.user-chip,
-.home-link {
-    padding: 9px 12px !important;
-    font-size: 14px !important;
-    white-space: nowrap !important;
-}
-
-/* Средний размер окна: логотип сверху, кнопки ниже */
 @media (max-width: 1050px) {
     .topbar {
-        justify-content: center !important;
+        justify-content: flex-start;
     }
 
     .home-link {
         order: 1;
     }
 
+    .auth-links {
+        order: 1;
+        margin-left: auto;
+        width: auto;
+        justify-content: flex-end;
+    }
+
     .nav {
         order: 2;
         width: 100%;
-    }
-
-    .auth-links {
-        order: 3;
-        width: 100%;
-        justify-content: center !important;
+        flex: 1 1 100%;
+        justify-content: center;
     }
 }
 
-/* Маленький экран: кнопки аккуратно складываются друг под друга */
-@media (max-width: 620px) {
-    .nav {
-        flex-direction: column !important;
-        align-items: stretch !important;
+@media (max-width: 950px) {
+    .model-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
     }
 
-    .nav-btn {
-        width: 100% !important;
+    .page {
+        padding: 10px;
     }
 
-    .auth-links {
-        flex-direction: column !important;
-        align-items: stretch !important;
+    .container {
+        width: 100%;
+        max-width: 100%;
+        padding: 16px 14px 24px;
+        border-radius: 22px;
+        overflow: hidden;
     }
 
-    .auth-links a,
-    .user-chip {
-        width: 100% !important;
+    .topbar {
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
     }
 
     .home-link {
-        justify-content: center !important;
-        width: 100% !important;
+        width: auto;
+        justify-content: center;
+        font-size: 14px;
+        padding: 9px 12px;
+    }
+
+    .nav,
+    .auth-links {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-left: 0;
+        overflow: visible;
+    }
+
+    .nav-btn,
+    .auth-links a,
+    .user-chip,
+    .logout-btn {
+        width: auto;
+        flex: 0 1 auto;
+        justify-content: center;
+        font-size: 13px;
+        padding: 9px 12px;
+        min-height: 40px;
+        border-radius: 14px;
+        white-space: nowrap;
+    }
+
+    h1 {
+        font-size: 30px;
+        line-height: 1.15;
+        margin-bottom: 14px;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    h3 {
+        font-size: 20px;
+    }
+
+    .description {
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 22px;
+    }
+
+    .form-wrapper,
+    .form-container,
+    .selection-form,
+    .compare-form {
+        max-width: 100%;
+        width: 100%;
+        padding: 0;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        width: 100%;
+        max-width: 100%;
+        font-size: 15px;
+        padding: 13px 14px;
+    }
+
+    label {
+        justify-content: center;
+        text-align: center;
+    }
+
+    button,
+    .button {
+        width: 100%;
+        font-size: 16px;
+        padding: 14px 16px;
+    }
+
+    .file-upload-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 14px;
+    }
+
+    .custom-file-btn {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .file-name {
+        text-align: center;
+    }
+
+    .preview img {
+        max-height: 260px;
+        border-radius: 18px;
+    }
+
+    .result,
+    .recommendation-block,
+    .similar-block,
+    .clarification-block,
+    .plant-card-block,
+    .selection-result,
+    .profile-card,
+    .history-card,
+    .model-info-card {
+        padding: 18px;
+        border-radius: 20px;
+        margin-top: 22px;
+    }
+
+    .plant-name {
+        font-size: 20px;
+    }
+
+    .confidence-bar-box {
+        padding: 14px;
+        max-width: 100%;
+    }
+
+    .confidence-bar-header {
+        flex-direction: column;
+        gap: 6px;
+        text-align: center;
+    }
+
+    .encyclopedia-filter-panel {
+        max-width: 100%;
+        padding: 16px;
+        border-radius: 20px;
+    }
+
+    .encyclopedia-search-input {
+        max-width: 100%;
+    }
+
+    .encyclopedia-filter-bottom {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .reset-filters-btn {
+        width: 100%;
+    }
+
+    .encyclopedia-grid,
+    .stats-grid,
+    .model-stats-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .encyclopedia-card {
+        border-radius: 22px;
+    }
+
+    .encyclopedia-image-wrap,
+    .encyclopedia-image {
+        height: 210px;
+    }
+
+    .encyclopedia-card-body,
+    .encyclopedia-content {
+        padding: 18px;
+    }
+
+    .encyclopedia-card h2,
+    .encyclopedia-section h3 {
+        text-align: center;
+    }
+
+    .favorite-btn,
+    .favorite-link {
+        width: 100%;
+    }
+
+    .history-card {
+        text-align: center;
+    }
+
+    .history-card img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 18px;
+    }
+
+    .action-btn,
+    .delete-btn {
+        width: 100%;
+        margin-top: 8px;
+        text-align: center;
+    }
+
+    .stat-card,
+    .model-stat-card {
+        padding: 18px;
+    }
+
+    .stat-value,
+    .model-stat-value {
+        font-size: 28px;
+    }
+
+    .plant-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 6px;
+    }
+
+    .compare-selects,
+    .compare-cards {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .compare-vs {
+        margin: 0 auto;
+    }
+
+    .compare-table-wrap {
+        overflow-x: auto;
+        border-radius: 18px;
+    }
+
+    .compare-table {
+        min-width: 620px;
+    }
+
+    .compare-table th,
+    .compare-table td {
+        padding: 12px 10px;
+        font-size: 14px;
+    }
+
+    .model-info-row {
+        flex-direction: column;
+        text-align: center;
+        gap: 6px;
+    }
+
+    .model-info-row strong {
+        text-align: center;
+        word-break: break-word;
+    }
+
+    .model-classes-grid {
+        justify-content: center;
+    }
+
+    .model-class-badge {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+}
+
+@media (max-width: 700px) {
+    .encyclopedia-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 620px) {
+    .topbar {
+        align-items: center;
+    }
+}
+
+@media (max-width: 420px) {
+    .container {
+        padding: 14px 10px 22px;
+        border-radius: 18px;
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+
+    .description {
+        font-size: 14px;
+    }
+
+    .nav-btn,
+    .auth-links a,
+    .user-chip,
+    .logout-btn {
+        font-size: 12px;
+        padding: 8px 10px;
+        min-height: 42px;
+    }
+
+    .encyclopedia-image-wrap,
+    .encyclopedia-image {
+        height: 190px;
+    }
+
+    .plant-card-image {
+        max-height: 240px;
     }
 }
