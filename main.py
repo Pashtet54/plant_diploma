@@ -480,19 +480,77 @@ async def select_plants_endpoint(request: Request):
 def encyclopedia_page(request: Request):
     user = get_current_user(request)
 
-    plants = get_all_plant_cards()
+    cards = get_all_plant_cards()
+    plants_params = get_all_plants_for_compare()
 
-    favorite_names = []
-    if user:
-        favorite_names = get_user_favorite_names(user.id)
+    params_by_name = {
+        plant["name"]: plant
+        for plant in plants_params
+    }
+
+    light_labels = {
+        "low": "Низкое",
+        "medium": "Среднее",
+        "high": "Высокое"
+    }
+
+    watering_labels = {
+        "rare": "Редкий",
+        "moderate": "Умеренный",
+        "frequent": "Частый"
+    }
+
+    humidity_labels = {
+        "low": "Низкая",
+        "medium": "Средняя",
+        "high": "Высокая"
+    }
+
+    difficulty_labels = {
+        "easy": "Лёгкая",
+        "medium": "Средняя",
+        "hard": "Сложная"
+    }
+
+    plants = []
+
+    for card in cards:
+        title = card.get("title", "")
+        params = params_by_name.get(title, {})
+
+        pets_safe = params.get("pets_safe", None)
+
+        plant = dict(card)
+        plant["light"] = params.get("light", "")
+        plant["watering"] = params.get("watering", "")
+        plant["humidity"] = params.get("humidity", "")
+        plant["difficulty"] = params.get("difficulty", "")
+
+        plant["light_label"] = light_labels.get(plant["light"], "Нет данных")
+        plant["watering_label"] = watering_labels.get(plant["watering"], "Нет данных")
+        plant["humidity_label"] = humidity_labels.get(plant["humidity"], "Нет данных")
+        plant["difficulty_label"] = difficulty_labels.get(plant["difficulty"], "Нет данных")
+
+        if pets_safe is True:
+            plant["pets_safe"] = "true"
+            plant["pets_safe_label"] = "Да"
+        elif pets_safe is False:
+            plant["pets_safe"] = "false"
+            plant["pets_safe_label"] = "Нет"
+        else:
+            plant["pets_safe"] = ""
+            plant["pets_safe_label"] = "Нет данных"
+
+        plants.append(plant)
+
+    plants = sorted(plants, key=lambda plant: plant.get("title", ""))
 
     return templates.TemplateResponse(
         "encyclopedia.html",
         {
             "request": request,
             "user": user,
-            "plants": plants,
-            "favorite_names": favorite_names
+            "plants": plants
         }
     )
 @app.post("/favorites/add")
@@ -617,5 +675,50 @@ def compare_page(request: Request, plant1: str = "", plant2: str = ""):
             "plant2": plant2,
             "first_plant": first_plant,
             "second_plant": second_plant,
+        }
+    )
+@app.get("/model-info")
+def model_info_page(request: Request):
+    import json
+    from pathlib import Path
+    from datetime import datetime
+
+    user = get_current_user(request)
+
+    model_path = Path("model/plant_classifier.keras")
+    class_names_path = Path("model/class_names.json")
+
+    class_names = []
+
+    if class_names_path.exists():
+        with open(class_names_path, "r", encoding="utf-8") as f:
+            class_names = json.load(f)
+
+    if model_path.exists():
+        model_date = datetime.fromtimestamp(model_path.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+        model_size_mb = round(model_path.stat().st_size / (1024 * 1024), 2)
+    else:
+        model_date = "Не найдено"
+        model_size_mb = "Не найдено"
+
+    model_info = {
+        "accuracy": "76.6%",
+        "classes_count": len(class_names),
+        "model_format": "Keras (.keras)",
+        "model_path": "model/plant_classifier.keras",
+        "class_names_path": "model/class_names.json",
+        "model_date": model_date,
+        "model_size_mb": model_size_mb,
+        "image_size": "224 × 224",
+        "task": "Классификация комнатных растений по изображению",
+        "classes": class_names
+    }
+
+    return templates.TemplateResponse(
+        "model_info.html",
+        {
+            "request": request,
+            "user": user,
+            "model_info": model_info
         }
     )

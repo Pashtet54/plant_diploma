@@ -64,7 +64,7 @@ def predict_plant(image):
             "display_name": None,
             "confidence": top1_conf,
             "is_unknown": True,
-            "message": "Модель не уверена (низкая уверенность или похожие варианты).",
+            
             "top_candidates": top_candidates
         }
 
@@ -72,6 +72,6 @@ def predict_plant(image):
         "display_name": class_names[top1_idx],
         "confidence": top1_conf,
         "is_unknown": False,
-        "message": "Растение успешно определено.",
+        
         "top_candidates": top_candidates
     }

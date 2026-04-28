@@ -2,117 +2,158 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Энциклопедия растений</title>
-    <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-<div class="page">
-    <div class="container">
+    <div class="page">
+        <div class="container">
+            <div class="topbar">
+                <a href="/" class="home-link">
+                    <img src="/static/logo.svg" class="logo">
+                    <span>Главная</span>
+                </a>
 
-        <div class="topbar">
-            <a href="/" class="home-link">
-                <img src="/static/logo.svg" class="logo" alt="Логотип">
-                <span>Главная</span>
-            </a>
+                <div class="nav">
+                    <a href="/" class="nav-btn">Поиск по фото</a>
+                    <a href="/selection" class="nav-btn">Подбор по условиям</a>
+                    <a href="/encyclopedia" class="nav-btn active">Энциклопедия</a>
+                    <a href="/favorites" class="nav-btn">Избранное</a>
+                    <a href="/compare" class="nav-btn">Сравнение</a>
+                    <a href="/history" class="nav-btn">История</a>
+                    <a href="/model-info" class="nav-btn">О модели</a>
+                </div>
 
-            <div class="nav">
-                <a href="/" class="nav-btn">Поиск по фото</a>
-                <a href="/selection" class="nav-btn">Подбор по условиям</a>
-                <a href="/encyclopedia" class="nav-btn active">Энциклопедия</a>
-                <a href="/favorites" class="nav-btn">Избранное</a>
-                <a href="/compare" class="nav-btn">Сравнение</a>
-                <a href="/history" class="nav-btn">История</a>
+                <div class="auth-links">
+                    {% if user %}
+                        <a href="/profile" class="user-chip">{{ user.username }}</a>
+                        <a href="/logout" class="logout-btn">Выйти</a>
+                    {% else %}
+                        <a href="/login" class="nav-btn">Войти</a>
+                    {% endif %}
+                </div>
             </div>
 
-            <div class="auth-links">
-                {% if user %}
-                    <a href="/profile" class="user-chip">{{ user.username }}</a>
-                    <a href="/logout" class="logout-btn">Выйти</a>
-                {% else %}
-                    <a href="/login" class="nav-btn">Войти</a>
-                {% endif %}
+            <h1>Энциклопедия растений</h1>
+            <p class="description">
+                Здесь собраны карточки растений с описанием, уходом, интересными фактами и параметрами содержания.
+            </p>
+
+            <div class="encyclopedia-filter-panel">
+                <div class="encyclopedia-search-row">
+                    <input
+                        type="text"
+                        id="plantSearch"
+                        class="encyclopedia-search-input"
+                        placeholder="Введите название растения..."
+                    >
+                </div>
+
+                <div class="encyclopedia-filter-bottom">
+                    <div class="plants-count">
+                        Найдено растений: <strong id="plantsCount">{{ plants|length }}</strong>
+                    </div>
+
+                    <button type="button" class="reset-filters-btn" id="resetFiltersBtn">
+                        Очистить поиск
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <h1>Энциклопедия растений</h1>
-
-        <p class="description">
-            Здесь собраны карточки комнатных растений: описание, советы по уходу и интересные факты.
-        </p>
-
-        {% if plants and plants|length > 0 %}
-            <div class="encyclopedia-grid">
+            <div class="encyclopedia-grid" id="encyclopediaGrid">
                 {% for plant in plants %}
-                    <div class="encyclopedia-card">
+                    <div
+                        class="encyclopedia-card"
+                        data-title="{{ plant.title|lower }}"
+                    >
+                        <div class="encyclopedia-image-wrap">
+                            {% if plant.image %}
+                                <img src="{{ plant.image }}" alt="{{ plant.title }}" class="encyclopedia-image">
+                            {% else %}
+                                <div class="encyclopedia-image-placeholder">🌿</div>
+                            {% endif %}
+                        </div>
 
-                        {% if plant.image %}
-                            <img
-                                src="{{ plant.image }}"
-                                alt="{{ plant.title }}"
-                                class="encyclopedia-image"
-                                onerror="this.style.display='none'"
-                            >
-                        {% endif %}
-
-                        <div class="encyclopedia-content">
+                        <div class="encyclopedia-card-body">
                             <h2>{{ plant.title }}</h2>
-
                             <p class="encyclopedia-description">
                                 {{ plant.description }}
                             </p>
 
-                            {% if plant.care %}
+                            <div class="plant-params-row">
+                                <span class="plant-param-badge">Свет: {{ plant.light_label }}</span>
+                                <span class="plant-param-badge">Полив: {{ plant.watering_label }}</span>
+                                <span class="plant-param-badge">Сложность: {{ plant.difficulty_label }}</span>
+                                <span class="plant-param-badge">Животные: {{ plant.pets_safe_label }}</span>
+                            </div>
+
+                            <div class="encyclopedia-section">
                                 <h3>Уход</h3>
                                 <ul>
                                     {% for item in plant.care %}
                                         <li>{{ item }}</li>
                                     {% endfor %}
                                 </ul>
-                            {% endif %}
+                            </div>
 
-                            {% if plant.facts %}
+                            <div class="encyclopedia-section">
                                 <h3>Интересные факты</h3>
                                 <ul>
                                     {% for item in plant.facts %}
                                         <li>{{ item }}</li>
                                     {% endfor %}
                                 </ul>
-                            {% endif %}
-
-                            {% if user %}
-                                {% if plant.title in favorite_names %}
-                                    <form method="post" action="/favorites/remove">
-                                        <input type="hidden" name="plant_name" value="{{ plant.title }}">
-                                        <button type="submit" class="favorite-btn remove">
-                                            Убрать из избранного
-                                        </button>
-                                    </form>
-                                {% else %}
-                                    <form method="post" action="/favorites/add">
-                                        <input type="hidden" name="plant_name" value="{{ plant.title }}">
-                                        <button type="submit" class="favorite-btn">
-                                            Добавить в избранное
-                                        </button>
-                                    </form>
-                                {% endif %}
-                            {% else %}
-                                <a href="/login" class="favorite-link">
-                                    Войдите, чтобы добавить в избранное
-                                </a>
-                            {% endif %}
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
-        {% else %}
-            <div class="empty-state">
-                Карточки растений пока не добавлены.
-            </div>
-        {% endif %}
 
+            <div class="empty-state" id="noPlantsMessage" style="display: none;">
+                По выбранным фильтрам растения не найдены.
+            </div>
+        </div>
     </div>
-</div>
+
+    <script>
+        const searchInput = document.getElementById("plantSearch");
+        const resetFiltersBtn = document.getElementById("resetFiltersBtn");
+        const plantsCount = document.getElementById("plantsCount");
+        const noPlantsMessage = document.getElementById("noPlantsMessage");
+
+        const cards = Array.from(document.querySelectorAll(".encyclopedia-card"));
+
+        function applySearch() {
+            const searchValue = searchInput.value.trim().toLowerCase();
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const title = card.dataset.title || "";
+
+                const isVisible =
+                    !searchValue ||
+                    title.includes(searchValue);
+
+                card.style.display = isVisible ? "block" : "none";
+
+                if (isVisible) {
+                    visibleCount++;
+                }
+            });
+
+            plantsCount.textContent = visibleCount;
+            noPlantsMessage.style.display = visibleCount === 0 ? "block" : "none";
+        }
+
+        function resetSearch() {
+            searchInput.value = "";
+            applySearch();
+        }
+
+        searchInput.addEventListener("input", applySearch);
+        resetFiltersBtn.addEventListener("click", resetSearch);
+    </script>
 </body>
 </html>

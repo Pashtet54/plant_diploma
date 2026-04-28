@@ -23,6 +23,8 @@
                     <a href="/favorites" class="nav-btn">Избранное</a>
                     <a href="/compare" class="nav-btn">Сравнение</a>
                     <a href="/history" class="nav-btn">История</a>
+                    <a href="/model-info" class="nav-btn">О модели</a>
+                    
                 </div>
 
                 <div class="auth-links">
@@ -61,12 +63,28 @@
             <div class="loading" id="loading">Идёт анализ изображения...</div>
             <div class="error" id="error"></div>
 
-            <div class="result" id="result">
+           <div class="result" id="result">
                 <h2>Результат анализа</h2>
                 <p><span class="label">Файл:</span> <span id="filename"></span></p>
                 <p><span class="label">Размер изображения:</span> <span id="imageSize"></span></p>
                 <p><span class="label">Растение:</span> <span id="plantName" class="plant-name"></span></p>
                 <p><span class="label">Уверенность:</span> <span id="confidence" class="confidence"></span></p>
+
+                <div class="confidence-bar-box">
+                    <div class="confidence-bar-header">
+                        <span>Шкала уверенности модели</span>
+                        <strong id="confidencePercentText">0%</strong>
+                    </div>
+
+                    <div class="confidence-bar-track">
+                        <div class="confidence-bar-fill" id="confidenceFill"></div>
+                    </div>
+
+                    <div class="confidence-bar-text" id="confidenceLabel">
+                        Оценка уверенности модели
+                    </div>
+                </div>
+
                 <p id="message"></p>
             </div>
 
@@ -208,7 +226,38 @@
                     analysis.confidence
                         ? `${(analysis.confidence * 100).toFixed(1)}%`
                         : "-";
+                const confidenceFill = document.getElementById("confidenceFill");
+                const confidenceLabel = document.getElementById("confidenceLabel");
+                const confidencePercentText = document.getElementById("confidencePercentText");
 
+                const confidencePercent = typeof analysis.confidence === "number"
+                    ? Math.round(analysis.confidence * 100)
+                    : 0;
+
+                confidencePercentText.textContent = `${confidencePercent}%`;
+
+                confidenceFill.classList.remove(
+                    "confidence-bar-low",
+                    "confidence-bar-medium",
+                    "confidence-bar-high"
+                );
+
+                confidenceFill.style.width = "0%";
+
+                if (confidencePercent >= 80) {
+                    confidenceFill.classList.add("confidence-bar-high");
+                    confidenceLabel.textContent = "Высокая уверенность — результат можно считать надёжным.";
+                } else if (confidencePercent >= 55) {
+                    confidenceFill.classList.add("confidence-bar-medium");
+                    confidenceLabel.textContent = "Средняя уверенность — желательно проверить результат и похожие варианты.";
+                } else {
+                    confidenceFill.classList.add("confidence-bar-low");
+                    confidenceLabel.textContent = "Низкая уверенность — лучше проверить растение вручную.";
+                }
+
+setTimeout(() => {
+    confidenceFill.style.width = `${confidencePercent}%`;
+}, 100);
                 messageEl.textContent = analysis.message || "";
                 resultBlock.style.display = "block";
 
@@ -230,7 +279,7 @@
                     } else {
                         const li = document.createElement("li");
                         li.textContent = "Советы отсутствуют";
-                        tipsList.appendChild(li);
+                        tipsList.appenсdChild(li);
                     }
 
                     recommendationBlock.style.display = "block";

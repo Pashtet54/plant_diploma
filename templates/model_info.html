@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О модели</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+            <div class="topbar">
+                <a href="/" class="home-link">
+                    <img src="/static/logo.svg" class="logo">
+                    <span>Главная</span>
+                </a>
+
+                <div class="nav">
+                    <a href="/" class="nav-btn">Поиск по фото</a>
+                    <a href="/selection" class="nav-btn">Подбор по условиям</a>
+                    <a href="/encyclopedia" class="nav-btn">Энциклопедия</a>
+                    <a href="/favorites" class="nav-btn">Избранное</a>
+                    <a href="/compare" class="nav-btn">Сравнение</a>
+                    <a href="/history" class="nav-btn">История</a>
+                    <a href="/model-info" class="nav-btn active">О модели</a>
+                </div>
+
+                <div class="auth-links">
+                    {% if user %}
+                        <a href="/profile" class="user-chip">{{ user.username }}</a>
+                        <a href="/logout" class="logout-btn">Выйти</a>
+                    {% else %}
+                        <a href="/login" class="nav-btn">Войти</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h1>О модели</h1>
+            <p class="description">
+                Информация о нейросетевой модели, которая используется для распознавания комнатных растений по фотографии.
+            </p>
+
+            <div class="model-stats-grid">
+                <div class="model-stat-card">
+                    <div class="model-stat-value">{{ model_info.accuracy }}</div>
+                    <div class="model-stat-label">Точность на тестовой выборке</div>
+                </div>
+
+                <div class="model-stat-card">
+                    <div class="model-stat-value">{{ model_info.classes_count }}</div>
+                    <div class="model-stat-label">Поддерживаемых классов</div>
+                </div>
+
+                <div class="model-stat-card">
+                    <div class="model-stat-value">{{ model_info.model_format }}</div>
+                    <div class="model-stat-label">Формат модели</div>
+                </div>
+
+                <div class="model-stat-card">
+                    <div class="model-stat-value">{{ model_info.image_size }}</div>
+                    <div class="model-stat-label">Размер входного изображения</div>
+                </div>
+            </div>
+
+            <div class="model-info-card">
+                <h2>Основные сведения</h2>
+
+                <div class="model-info-row">
+                    <span>Задача модели</span>
+                    <strong>{{ model_info.task }}</strong>
+                </div>
+
+                <div class="model-info-row">
+                    <span>Файл модели</span>
+                    <strong>{{ model_info.model_path }}</strong>
+                </div>
+
+                <div class="model-info-row">
+                    <span>Файл классов</span>
+                    <strong>{{ model_info.class_names_path }}</strong>
+                </div>
+
+                <div class="model-info-row">
+                    <span>Дата последнего обучения</span>
+                    <strong>{{ model_info.model_date }}</strong>
+                </div>
+
+                <div class="model-info-row">
+                    <span>Размер файла модели</span>
+                    <strong>{{ model_info.model_size_mb }} MB</strong>
+                </div>
+            </div>
+
+            <div class="model-info-card">
+                <h2>Поддерживаемые растения</h2>
+
+                {% if model_info.classes and model_info.classes|length > 0 %}
+                    <div class="model-classes-grid">
+                        {% for plant in model_info.classes %}
+                            <div class="model-class-badge">
+                                {{ plant }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        Файл классов не найден или пуст.
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="model-info-card">
+                <h2>Описание работы</h2>
+                <p class="model-description">
+                    Пользователь загружает фотографию растения. Изображение предварительно обрабатывается,
+                    приводится к нужному размеру и передаётся в модель. После этого система получает вероятности
+                    по каждому классу и выбирает наиболее вероятный вариант. Если уверенность модели низкая,
+                    результат помечается как неуверенный и пользователю показываются дополнительные варианты.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

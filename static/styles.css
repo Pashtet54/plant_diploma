@@ -1250,3 +1250,404 @@ hr {
         margin: 0 auto;
     }
 }
+/* ===== Шкала уверенности модели ===== */
+
+/* ===== Красивая шкала уверенности ===== */
+
+.confidence-bar-box {
+    width: 100% !important;
+    max-width: 620px !important;
+    margin: 18px auto 18px auto !important;
+    padding: 18px !important;
+    border-radius: 20px !important;
+    background: rgba(255, 255, 255, 0.85) !important;
+    border: 1px solid rgba(20, 120, 80, 0.16) !important;
+    box-shadow: 0 12px 30px rgba(15, 80, 55, 0.10) !important;
+}
+
+.confidence-bar-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 10px !important;
+    color: #0f5c45 !important;
+    font-weight: 800 !important;
+}
+
+.confidence-bar-header strong {
+    font-size: 20px !important;
+    color: #0f5c45 !important;
+}
+
+.confidence-bar-track {
+    width: 100% !important;
+    height: 20px !important;
+    background: #e5eee9 !important;
+    border-radius: 999px !important;
+    overflow: hidden !important;
+    position: relative !important;
+}
+
+.confidence-bar-fill {
+    height: 100% !important;
+    width: 0%;
+    border-radius: 999px !important;
+    transition: width 0.8s ease !important;
+}
+
+.confidence-bar-high {
+    background: linear-gradient(90deg, #16a34a, #22c55e) !important;
+}
+
+.confidence-bar-medium {
+    background: linear-gradient(90deg, #f59e0b, #facc15) !important;
+}
+
+.confidence-bar-low {
+    background: linear-gradient(90deg, #dc2626, #f87171) !important;
+}
+
+.confidence-bar-text {
+    margin-top: 10px !important;
+    text-align: center !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #30423b !important;
+}
+/* ===== Фильтры энциклопедии ===== */
+
+.encyclopedia-filter-panel {
+    max-width: 980px;
+    margin: 0 auto 30px auto;
+    padding: 22px;
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.68);
+    border: 1px solid rgba(141, 168, 156, 0.20);
+    box-shadow: 0 14px 34px rgba(21, 52, 40, 0.08);
+    backdrop-filter: blur(10px);
+}
+
+.encyclopedia-search-row {
+    margin-bottom: 18px;
+}
+
+.encyclopedia-search-input {
+    max-width: 720px !important;
+    text-align: center;
+    font-weight: 600;
+}
+
+.encyclopedia-filters {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.filter-field label {
+    display: block;
+    text-align: center;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--green-dark);
+}
+
+.filter-field select {
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+}
+
+.encyclopedia-filter-bottom {
+    margin-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.plants-count {
+    font-weight: 800;
+    color: var(--green-dark);
+}
+
+.reset-filters-btn {
+    width: auto;
+    min-width: 180px;
+    padding: 12px 18px;
+    border-radius: 16px;
+    font-size: 15px;
+}
+
+.plant-params-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 14px 0 16px 0;
+}
+
+.plant-param-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(236, 253, 245, 0.9);
+    color: #0f5c45;
+    font-size: 13px;
+    font-weight: 800;
+    border: 1px solid rgba(117, 199, 156, 0.22);
+}
+
+@media (max-width: 900px) {
+    .encyclopedia-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .encyclopedia-filter-bottom {
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+@media (max-width: 560px) {
+    .encyclopedia-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .reset-filters-btn {
+        width: 100%;
+    }
+}
+/* ===== Упрощённый поиск энциклопедии ===== */
+
+.encyclopedia-filter-panel {
+    max-width: 720px;
+}
+
+.encyclopedia-search-row {
+    margin-bottom: 16px;
+}
+
+.encyclopedia-search-input {
+    max-width: 600px !important;
+    text-align: center;
+}
+
+.encyclopedia-filter-bottom {
+    justify-content: center;
+    text-align: center;
+}
+
+.reset-filters-btn {
+    width: auto;
+    min-width: 170px;
+}
+/* ===== Страница "О модели" ===== */
+
+.model-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin: 28px 0;
+}
+
+.model-stat-card {
+    padding: 24px 18px;
+    border-radius: 24px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(141, 168, 156, 0.22);
+    box-shadow: 0 14px 34px rgba(21, 52, 40, 0.08);
+    transition: 0.25s ease;
+}
+
+.model-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 42px rgba(21, 52, 40, 0.13);
+}
+
+.model-stat-value {
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+}
+
+.model-stat-label {
+    color: var(--muted);
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.model-info-card {
+    margin-top: 28px;
+    padding: 26px;
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(141, 168, 156, 0.22);
+    box-shadow: 0 14px 34px rgba(21, 52, 40, 0.08);
+}
+
+.model-info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(141, 168, 156, 0.18);
+}
+
+.model-info-row:last-child {
+    border-bottom: none;
+}
+
+.model-info-row span {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.model-info-row strong {
+    color: var(--green-dark);
+    text-align: right;
+}
+
+.model-classes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.model-class-badge {
+    padding: 9px 13px;
+    border-radius: 999px;
+    background: rgba(236, 253, 245, 0.9);
+    color: var(--green-dark);
+    font-weight: 800;
+    border: 1px solid rgba(117, 199, 156, 0.22);
+}
+
+.model-description {
+    max-width: 900px;
+    margin: 0 auto;
+    color: var(--muted);
+    line-height: 1.8;
+    text-align: center;
+    font-size: 17px;
+}
+
+@media (max-width: 950px) {
+    .model-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .model-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .model-info-row {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .model-info-row strong {
+        text-align: center;
+    }
+}
+/* ===== ФИКС ВЕРХНЕГО МЕНЮ БЕЗ ПОЛЗУНКА ===== */
+
+.topbar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+    flex-wrap: wrap !important;
+}
+
+.nav {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    scrollbar-width: none !important;
+}
+
+.nav::-webkit-scrollbar {
+    display: none !important;
+}
+
+.nav-btn {
+    flex: 0 1 auto !important;
+}
+
+.auth-links {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+}
+
+/* Чтобы кнопки не были слишком большими */
+.nav-btn,
+.auth-links a,
+.user-chip,
+.home-link {
+    padding: 9px 12px !important;
+    font-size: 14px !important;
+    white-space: nowrap !important;
+}
+
+/* Средний размер окна: логотип сверху, кнопки ниже */
+@media (max-width: 1050px) {
+    .topbar {
+        justify-content: center !important;
+    }
+
+    .home-link {
+        order: 1;
+    }
+
+    .nav {
+        order: 2;
+        width: 100%;
+    }
+
+    .auth-links {
+        order: 3;
+        width: 100%;
+        justify-content: center !important;
+    }
+}
+
+/* Маленький экран: кнопки аккуратно складываются друг под друга */
+@media (max-width: 620px) {
+    .nav {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .nav-btn {
+        width: 100% !important;
+    }
+
+    .auth-links {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .auth-links a,
+    .user-chip {
+        width: 100% !important;
+    }
+
+    .home-link {
+        justify-content: center !important;
+        width: 100% !important;
+    }
+}
